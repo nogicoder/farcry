@@ -30,20 +30,17 @@ def parse_log_start_time(log_data):
     @return {object} start_time:(datetime.datetime) represent the time the Far Cry engine started to log at.
 
     """
-    import datetime
-    month = {'January': 1, 'February': 2, 'March': 3, 'April': 4, 'May': 5, 'June': 6, 'July': 7, 'August': 8, 'September': 9,
-    'October': 10, 'November': 11, 'December': 12}
 
-    first_line = log_data.split('\n')[0]
-    day = first_line.split(' ')[4:-1]
-    time = first_line.split(' ')[-1].split(":")
-    start_time = datetime.datetime(int(day[2]), month[day[0]], int(day[1][:-1]), int(time[0]), int(time[1]), int(time[2]), tzinfo=datetime.timezone(datetime.timedelta(days=-1, seconds=68400)))
+    from datetime import datetime
+
+    first_line = log_data.split('\n')[0][15:]
+    format_form = "%A, %B %d, %Y %H:%M:%S" # Friday, November 09, 2018 12:22:07
+    start_time = datetime.strptime(first_line, format_form)
 
     return start_time
-
+   
 
 if __name__ == "__main__":
     log_data = read_log_file("../logs/log00.txt")
-    # print(len(log_data))
     log_start_time = parse_log_start_time(log_data)
     print(log_start_time.isoformat())
