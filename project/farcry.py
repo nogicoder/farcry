@@ -56,31 +56,40 @@ def parse_match_mode_and_map(log_data):
     """
     Waypoint 4: Parse Match Session's Mode and Map
     ---
-    Finding key word 'Loading level' and retrive index of the word that indicates the mode and the map
-    ---
     @param {str} log_data: content of log file
     @return {tuple} (mode, map).
 
     """
-    index = log_data.find('Loading level') + 21
-    mode_and_map = log_data[index: index+50].split(' ')
-    map = mode_and_map[0][:-1]
-    mode = mode_and_map[2]
+    from re import findall
+
+    mode_and_map = findall(".* Loading level Levels\/(.*), mission (.*) -.*", log_data)
     
-    return (mode, map)
+    return mode_and_map
 
 
 def parse_frags(log_data):
+    """
+    Waypoint 5: Parse Frag History
+    """
+
     from re import findall
+
+    # (frag_time, killer_name)
+    patterm_2 = "<(\d{2}:\d{2})> <.*> (.*) killed itself"
+    frag_2 = findall(patterm_2, log_data)
+
+    # (frag_time, killer_name, victim_name, weapon_code)
+    patterm_4 = "<(\d{2}:\d{2})> <.*> (.*) killed (.*) with (.*)"
+    frag_4 = findall(patterm_4, log_data)
+
+    return frag_2 + frag_4
     
-    patterm = "<\d{2}:\d{2}>\s<\w*>\s\w*\skilled\s\w*\swith\s\w*"
-    frag = findall(patterm, log_data)
-    print(frag)
 
 if __name__ == "__main__":
-    log_data = read_log_file("../logs/log09.txt")
+    log_data = read_log_file("../logs/log05.txt")
     wp2_3 = parse_log_start_time(log_data)
     # print(wp2_3)
     wp4 = parse_match_mode_and_map(log_data)
-    # print(wp4, type(wp4))
-    parse_frags(log_data)
+    print(wp4, type(wp4))
+    wp5 =parse_frags(log_data)
+    # print(wp5, type(wp5))
