@@ -70,26 +70,38 @@ def parse_match_mode_and_map(log_data):
 def parse_frags(log_data):
     """
     Waypoint 5: Parse Frag History
+    Waypoint 6: Include Time Zone To Frag Timestamps
     """
 
     from re import findall
+    from datetime import datetime
 
     # (frag_time, killer_name)
-    patterm_2 = "<(\d{2}:\d{2})> <.*> (.*) killed itself"
-    frag_2 = findall(patterm_2, log_data)
-
     # (frag_time, killer_name, victim_name, weapon_code)
-    patterm_4 = "<(\d{2}:\d{2})> <.*> (.*) killed (.*) with (.*)"
-    frag_4 = findall(patterm_4, log_data)
 
-    return frag_2 + frag_4
+    patterm = "<(\d{2}:\d{2})> <.*> (.*) killed (.*)(itself| with)(.*)"
+    rough_frags = findall(patterm, log_data)
+
+    start_time = parse_log_start_time(log_data)
+    frags = []
     
+    for frag in rough_frags:
+        frag_time = start_time.replace(minute=int(frag[0][:2]), second=int(frag[0][3:]))
+        line = list(frag)
+        line.pop(0) # del time
+        line.pop(2) # del with/itself 
+        if len(frag[-1]) > 0: # del space 
+            line[-1] = frag[-1][1:]
+        line = [frag_time] + line # combine frag
+        frags.append(tuple(line)) # add to big frags
+    return frags
+
 
 if __name__ == "__main__":
     log_data = read_log_file("../logs/log05.txt")
     wp2_3 = parse_log_start_time(log_data)
     # print(wp2_3)
     wp4 = parse_match_mode_and_map(log_data)
-    print(wp4, type(wp4))
-    wp5 =parse_frags(log_data)
-    # print(wp5, type(wp5))
+    # print(wp4, type(wp4))
+    wp5_6 = parse_frags(log_data)
+    print(wp5_6, type(wp5_6))
