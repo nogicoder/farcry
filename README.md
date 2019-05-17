@@ -4,15 +4,15 @@
 
 ## Introduction
 
-[Far Cry is a first-person shooter (FPS) video game](https://www.youtube.com/watch?v=Cz3vGM08S7Q&has_verified=1) with amazing graphics, developed by Crytek and published by Ubisoft. The game was released in 2004 for Microsoft Windows. The game was a huge commercial success. Ubisoft closed the online servers almost 12 years later.
+[Far Cry is a first-person shooter (FPS) video game](https://www.youtube.com/watch?v=Cz3vGM08S7Q&has_verified=1) with amazing graphics, developed by Crytek and published by Ubisoft. The game was released in 2004 for Microsoft Windows and was a huge commercial success. Ubisoft closed the online servers almost 12 years later.
 
-Far Cry features several [multiplayer modes](https://www.youtube.com/watch?v=GaFM0uWAzh0) in which players basically score points by killing other players. One of these multiplayer modes is deathmatch, also known as free for all (FFA), which goals is to kill (or frag, from the military term) as many other players as possible within a limited period of time. Basically, everything that moves SHOULD be killed… :)
+Far Cry features several [multiplayer modes](https://www.youtube.com/watch?v=GaFM0uWAzh0) in which players basically score points by killing other players. One of these multiplayer modes is deathmatch, also known as free for all (FFA), where the goal is to kill (or frag, from the military term) as many other players as possible within a limited period of time. Basically, everything that moves SHOULD be killed… :)
 
 ## Multiplayer FFA Session
 
-Players can join an online multiplayer session by connecting to a Far Cry server. A session starts for a configurable limited period of time, such as for instance 30 minutes, during which each player try their best to seek and kill other players.
+Players can join an online multiplayer session by connecting to a Far Cry server. A session starts for a configurable limited period of time, for example: 30 minutes, during which each player tries their best to seek out and kill other players.
 
-When the limited period of time expires, the game stops and it displays the results of the match as a ordered leaderboard with the number of kills and deaths per player, and the efficiency of each player:
+When the limited period of time expires, the game stops and it displays the results of the match as an ordered leaderboard with the number of kills and deaths per player, and the efficiency of each player:
 
 ![Multiplayer Match Session Leaderboard](farcry_multiplayer-match-session-leaderboard.jpg)
 
@@ -44,9 +44,9 @@ Players have access to a large arsenal of real-world weapons in Far Cry, from gr
 
 _Note: AG36 Assault Rifle and OICW Advanced Assault Rifle weapons have two fire modes: automatic rifle and grenade launcher._
 
-## Server’s Log: Frag History
+## Server Log: Frag History
 
-The Far Cry server stores [log information into a text file](./logs/log00.txt), starting with engine and system initialization data, followed by all the frags that occurred in every match sessions. For instance:
+The Far Cry server stores [log information in a text file](./logs/log00.txt), starting with engine and system initialization data, followed by all the frags that occurred in every match sessions. For instance:
 
 ```bash
 $ cat ./logs/log00.txt | grep killed | head
@@ -68,7 +68,7 @@ The format of a line corresponding to a frag, when a player kills one other play
 <MM:SS:> <Lua> killer_username killed victim_username with weapon_code
 ```
 
-or the following format, when a player kills himself, e.g., when a stupid player miserably dies by throwing a grenade that eventually explodes on his feet...
+or the following format, when a player kills himself, e.g., when a stupid player miserably dies by throwing a grenade that eventually explodes at their feet...
 
 ```text
 <MM:SS:> <Lua> killer_username killed itself
@@ -82,9 +82,9 @@ Where:
 - `victim_username`: username of the player who has been fragged;
 - `weapon_code`: code name of the weapon that was used to frag the other player.
 
-_Note: the time of a frag is relative to the time the Far Cry engine started. It represents the number of minutes/seconds elapsed between the moment when the game engine started and the frags occurred._
+_Note: The time of a frag is relative to the time the Far Cry engine started. It represents the number of minutes/seconds elapsed between the moment the game engine started and when the frags occurred._
 
-_Note: players who joined a match but who hided during all the match, meaning they didn't kill anyone, and they haven't been killed by anyone, don't appear in the frag history at all. We just ignore them._
+_Note: Players who joined a match but who hid during all the match, meaning they didn't kill anyone and they haven't been killed by anyone, don't appear in the frag history at all. We just ignore them._
 
 You can download [Far Cry 1.34 on Windows](https://drive.google.com/file/d/1pQ5RFuQ3t669KXd_jV-2KoOONdT6NcY8/view?usp=sharing), [unzip](https://www.7-zip.org/) the archive on the disk of your computer, and run the executable `./Bin32/FarCry.exe`.
 
@@ -104,16 +104,16 @@ For example:
 
 # Waypoint 2: Parse Far Cry Engine's Start Time
 
-Each frag time is related to the date and time the Far Cry engine started at. The latter is provided in the first line of the Far Cry log file:
+The time of each frag is related to the date and time the Far Cry engine started. The latter is provided in the first line of the Far Cry log file:
 
 ```bash
 $ head -1 ./logs/log00.txt
 Log Started at Friday, November 09, 2018 12:22:07
 ```
 
-We need to parse this date and time information to determine later the [timestamp](https://en.wikipedia.org/wiki/Timestamp) of each frag.
+We need to parse this date and time information to later determine the [timestamp](https://en.wikipedia.org/wiki/Timestamp) of each frag.
 
-Write a function `parse_log_start_time` that takes an argument `log_data`, representing the data read from a Far Cry server's log file, and returns a [`datetime.datetime`](https://docs.python.org/3/library/datetime.html#datetime.datetime) object representing the time the Far Cry engine started to log at.
+Write a function `parse_log_start_time` that takes an argument `log_data`, representing the data read from a Far Cry server's log file, and returns a [`datetime.datetime`](https://docs.python.org/3/library/datetime.html#datetime.datetime) object representing the time the Far Cry engine began to log events.
 
 ```python
 >>> log_data = read_log_file('./logs/log00.txt')
@@ -124,17 +124,17 @@ datetime.datetime(2018, 11, 9, 12, 22, 7)
 '2018-11-09T12:22:07'
 ```
 
-_Note 1: you can easily parse a human-readable date time such as `Saturday, March 30, 2019 09:11:31` into `datetime.datetime` object with the function [`strptime`](https://docs.python.org/3/library/datetime.html#datetime.datetime.strptime) and the various [format strings](https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior) this function supports._
+_Note 1: You can easily parse a human-readable date time such as `Saturday, March 30, 2019 09:11:31` into a `datetime.datetime` object with the function [`strptime`](https://docs.python.org/3/library/datetime.html#datetime.datetime.strptime) and the various [format strings](https://docs.python.org/3/library/datetime.html#strftime-strptime-behavior) this function supports._
 
-_Note 2: the method [`isoformat`](https://docs.python.org/3/library/datetime.html#datetime.datetime.isoformat) return a string representation of the date and time in the international date standard [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format._
+_Note 2: The method [`isoformat`](https://docs.python.org/3/library/datetime.html#datetime.datetime.isoformat) returns a string representation of the date and time in the international date standard [ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html) format._
 
 # Waypoint 3: Parse Far Cry Engine's Start Time with Time Zone
 
 ![World Time Zones Map](world-time-zones-map.png)
 
-However, even the time `November 09, 2018 12:22:07` is a relative time. It is relative to the place (a location) on the Earth where the related event occurred. We call such time a [local time](https://www.dictionary.com/browse/local-time).
+However, even the time `November 09, 2018 12:22:07` is a relative time. It is relative to the place (a location) on Earth where the related event occurred. We call this time a [local time](https://www.dictionary.com/browse/local-time).
 
-If we had to store statistics of Far Cry match sessions that started from all over the world, we would not be able to chronologically sort them. The time expression `Saturday, March 30, 2019 09:11:31` doesn't represent the same point of time for two locations far away from each other, such as for instance Bordeaux and Saigon.
+If we had to store statistics of Far Cry match sessions that started from all over the world, we would not be able to chronologically sort them. The time expression `Saturday, March 30, 2019 09:11:31` doesn't represent the same point of time for two locations far away from each other, such as Bordeaux and Saigon.
 
 We generally define a [time with its corresponding time zone](https://en.wikipedia.org/wiki/ISO_8601#Time_zone_designators) related to [UTC](https://en.wikipedia.org/wiki/Coordinated_Universal_Time), also known as [UTC offset](https://en.wikipedia.org/wiki/UTC_offset).
 
@@ -145,7 +145,7 @@ $ grep g_timezone ./logs/log00.txt
 <18:12> Lua cvar: (g_timezone,-5)
 ```
 
-_Note: you might want to parse and load all the console variables declared in the Far Cry log file into a [dictionary](https://docs.python.org/3.7/tutorial/datastructures.html#dictionaries) object. It would be easier to manipulate these settings later._
+_Note: You might want to parse and load all the console variables declared in the Far Cry log file into a [dictionary](https://docs.python.org/3.7/tutorial/datastructures.html#dictionaries) object. It would be easier to manipulate these settings later._
 
 ```bash
 $ grep cvar ./logs/log00.txt | head -n 20
@@ -171,7 +171,7 @@ $ grep cvar ./logs/log00.txt | head -n 20
 <22:08> Lua cvar: (e_light_maps_quality,2)
 ```
 
-Update your function `parse_log_start_time` to return a [`datetime.datetime`](https://docs.python.org/3/library/datetime.html#datetime.datetime) object with a time zone information.
+Update your function `parse_log_start_time` to return a [`datetime.datetime`](https://docs.python.org/3/library/datetime.html#datetime.datetime) object with time zone information.
 
 ```python
 >>> log_data = read_log_file('./logs/log00.txt')
@@ -184,15 +184,15 @@ datetime.datetime(2018, 11, 9, 12, 22, 7, tzinfo=datetime.timezone(datetime.time
 
 # Waypoint 4: Parse Match Session's Mode and Map
 
-Like said previously, Far Cry features several multiplayer modes:
+As mentioned previously, Far Cry features several multiplayer modes:
 
-- `ASSAULT`: there are two teams, one is defending a flag and the other team is attacking it. Each maps has 3 flags and if after 20 minutes not all flags are captured teams switch. The flags are on fixed positions in the map and only one flag at the time is active;
-- `TDM` (Team DeathMatch): there are two teams. Players of one team kill members of the other team;
-- `FFA` (Free-For-All): players kill anyone they kind find.
+- `ASSAULT`: There are two teams, one is defending a flag and the other team is attacking it. Each maps has 3 flags and if after 20 minutes not all flags are captured the teams switch sides. The flags are on fixed positions in the map and only one flag at a time is active;
+- `TDM` (Team DeathMatch): There are two teams. Players of one team kill members of the other team;
+- `FFA` (Free-For-All): Players kill anyone they can find.
 
-There are also several maps available such as `mp_surf`, `mp_radio`, `mp_jungle`, and a few others.
+There are also several maps available such as `mp_surf`, `mp_radio` and `mp_jungle` to name a few.
 
-When you start a multiplayer session, you select which mode and which map to play with. Far Cry engine saves this information in its log file:
+When you start a multiplayer session, you select which mode and which map to play with. The Far Cry engine saves this information in its log file:
 
 ```bash
 $ grep "Loading level" ./logs/log00.txt
@@ -201,8 +201,8 @@ $ grep "Loading level" ./logs/log00.txt
 
 Write a function `parse_session_mode_and_map` that takes an argument `log_data`, representing the data read from a Far Cry server's log file, and returns a tuple `(mode, map)` where:
 
-- `mode`: indicates the multiplayer mode that was played, eithr `ASSAULT`, `TDM`, or `FFA`;
-- `map`: the name of the map that was player, such as for instance `mp_surf`.
+- `mode`: indicates the multiplayer mode that was played, either `ASSAULT`, `TDM`, or `FFA`;
+- `map`: the name of the map that was used, for instance `mp_surf`.
 
 ```python
 >>> log_data = read_log_file('./logs/log00.txt')
@@ -214,13 +214,13 @@ Write a function `parse_session_mode_and_map` that takes an argument `log_data`,
 
 You need to write a Python function `parse_frags` that takes an argument `log_data`, representing the data read from a Far Cry server's log file, and returns a list of frags.
 
-Each frag is represented by a tuple of the following form:
+Each frag is represented by a tuple in the following form:
 
 ```text
 (frag_time, killer_name, victim_name, weapon_code)
 ```
 
-or, the simple following form, if the player committed suicide:
+or, a simpler form, if the player committed suicide:
 
 ```text
 (frag_time, killer_name)
@@ -233,7 +233,7 @@ where:
 - `victim_name` (optional): username of the player who has been fragged;
 - `weapon_code` (optional): code name of the weapon that was used to frag.
 
-The parameter `log_file_pathname` is path-like object giving the pathname (absolute or relative to the current working directory) of the log file.
+The parameter `log_file_pathname` is a path-like object giving the pathname (absolute or relative to the current working directory) of the log file.
 
 For example:
 
@@ -253,15 +253,15 @@ For example:
  ('53:19', 'cyap', 'papazark', 'AG36')]
 ```
 
-_Note: we suggest you use the function [`findall`](https://docs.python.org/3/library/re.html#re.findall) of the Python module [re](https://docs.python.org/3/library/re.htm) that provides regular expression matching operations similar to those found in Perl._
+_Note: We suggest you use the function [`findall`](https://docs.python.org/3/library/re.html#re.findall) of the Python module [re](https://docs.python.org/3/library/re.htm) that provides regular expression matching operations similar to those found in Perl._
 
 # Waypoint 6: Include Time Zone To Frag Timestamps
 
-The logged time of a frag is actually truncated. Its format `MM:SS` corresponds to the minute and second of the hour the Far Cry engine started logging at. The complete time of a frag corresponds to time the Far Cry engine started at where hours and minutes are replaced with the logged minutes and seconds `MM:SS` of this frag.
+The logged time of a frag is actually truncated. Its format `MM:SS` corresponds to the minute and second of the hour in which the Far Cry engine started logging. The complete time of a frag corresponds to the time the Far Cry engine started at, where hours and minutes are replaced with the logged minutes and seconds `MM:SS` of this frag.
 
 For instance, if the Far Cry engine started at `November 09, 2018 12:22:07`, the exact time of the frag log "`<26:32> <Lua> papazark killed lamonthe with AG36`" is `November 09, 2018 12:`**`26:32`**.
 
-Rewrite the function `parse_frags` so that the time of each frag returned is a `datetime.datetime` object with time zone. For example:
+Rewrite the function `parse_frags` so that the time of each frag returned is a `datetime.datetime` object with a time zone. For example:
 
 ```python
 >>> log_data = read_log_file('./logs/log00.txt')
@@ -278,7 +278,7 @@ Rewrite the function `parse_frags` so that the time of each frag returned is a `
  (datetime.datetime(2018, 11, 9, 12, 53, 19, tzinfo=datetime.timezone(datetime.timedelta(days=-1, seconds=68400))), 'cyap', 'papazark', 'AG36')]
 ```
 
-**CAUTION!** When the logged time reaches `59:59`, it is reset to `00:00`, but because unfortunately Far Cry's log time doesn't indicate hours, you MUST to increment the hours by 1 yourself.
+**CAUTION!** When the logged time reaches `59:59`, it is reset to `00:00`. However, because Far Cry's log time unfortunately doesn't indicate hours, you MUST increment the hours by 1 yourself.
 
 For instance, the following frag logs:
 
@@ -309,7 +309,7 @@ which, for a better understanding, the human-readable form is:
 
 # Waypoint 7: Prettify Frag History
 
-[Emojis](https://unicode.org/emoji/charts/emoji-list.html) are pictographs (pictorial symbols) that are typically presented in a colorful form and used inline in text. They represent things such as faces, weather, vehicles and buildings, food and drink, animals and plants, or icons that represent emotions, feelings, or activities.
+[Emojis](https://unicode.org/emoji/charts/emoji-list.html) are pictographs (pictorial symbols) that are typically presented in a colorful form and used inline with text. They represent things such as faces, weather, vehicles and buildings, food and drink, animals and plants, or icons that represent emotions, feelings, or activities.
 
 We would like to display the list of frags on the terminal screen in a funnier way, using emoji characters.
 
@@ -324,13 +324,13 @@ The emoji 😛 represents the killer. The emoji 😦 represents the victim. The 
 | [🔪](https://emojipedia.org/hocho/)                | Machete                                                                                                                                                                                | `Machete`                                                                                                                 |
 | [🚤](https://emojipedia.org/speedboat/)            | Patrol Boat                                                                                                                                                                            | `Boat`                                                                                                                    |
 
-Write a function `prettify_frags` that takes one argument `frags`, an array of tuples of frags parsed from a Far Cry server's log file, and that returns a list of strings, each of the following format:
+Write a function `prettify_frags` that takes one argument `frags`, an array of tuples of frags parsed from a Far Cry server's log file, and that returns a list of strings, each with the following format:
 
 ```text
 [frag_time] 😛 killer_name weapon_icon 😦 victim_name
 ```
 
-or, the simple following form, if the player committed suicide:
+or, the simpler form, if the player committed suicide:
 
 ```text
 [frag_time] 😦 victim_name ☠
@@ -415,13 +415,13 @@ For example:
 
 # Waypoint 9: Create Frag History CSV File
 
-We would like to import a frag history into a [spreadsheet](https://en.wikipedia.org/wiki/Spreadsheet) for further analysis. A spreadsheet consists of a table of cells arranged into rows and column.
+We would like to import a frag history into a [spreadsheet](https://en.wikipedia.org/wiki/Spreadsheet) for further analysis. The spreadsheet will consist of a table of cells arranged into rows and column.
 
-To import our frag history data into a spreadsheet application, we need to store these data into a [CSV file](https://en.wikipedia.org/wiki/Comma-separated_values).
+To import our frag history data into a spreadsheet application, we need to store this data into a [CSV file](https://en.wikipedia.org/wiki/Comma-separated_values).
 
 Write a function `write_frag_csv_file` that takes an argument `log_file_pathname` representing the pathname of the CSV file to store the frags in, and an argument `frags`, an array of tuples of the frags.
 
-Each frag is representing by a comma-separated value (CSV) string of the following form:
+Each frag is represented by a comma-separated value (CSV) string with the following form:
 
 ```python
 >>> log_data = read_log_file('./logs/log04.txt')
@@ -443,7 +443,7 @@ $ head -10 ./logs/log04.csv
 2018-11-09 12:30:07-05:00,theprophete,papazark,SniperRifle
 ```
 
-_Note: you MUST to use the Python module [csv](https://docs.python.org/3/library/csv.html)._
+_Note: You MUST use the Python module [csv](https://docs.python.org/3/library/csv.html)._
 
 ---
 
@@ -455,19 +455,19 @@ We will use [Google Sheets](https://www.google.com/sheets/about/) to calculate s
 
 You need to create a Google Sheets document and to name it "_Intek Institute – Far Cry – Frag History_".
 
-_Note: if you have no idea how to create a Google spreadsheet, well... just **google** it: "[how to create a google spreadsheet](https://www.google.com.vn/search?q=how+to+create+a+google+spreadsheet)"!_
+_Note: If you have no idea how to create a Google spreadsheet, well... just **google** it: "[how to create a google spreadsheet](https://www.google.com.vn/search?q=how+to+create+a+google+spreadsheet)"!_
 
-Import the CSV file of Far Cry frags you have generated into your Google Sheets document. For example:
+Import the CSV file of Far Cry frags that you have generated into your Google Sheets document. For example:
 
 ![Far Cry Frag History Spreadsheet](farcry_frag-history_spreadsheet.png)
 
-At this stage, you should definitively watch a few [online tutorials](https://www.youtube.com/watch?v=wQfApf3eci8&list=PLv9Pf9aNgemt61gjKQaYZHjvZlVp4OANq) about Google Sheet to understand the basic principles of rows, columns, cells, [relative and absolute cell references](https://edu.gcfglobal.org/en/googlespreadsheets/types-of-cell-references/1/), etc. formulas. You will find a lot of online resources and, indeed, the [Google Sheets Help Center](https://support.google.com/docs/topic/9054603?ref_topic=1382883) from Google itself!
+At this stage, you should definitely watch a few [online tutorials](https://www.youtube.com/watch?v=wQfApf3eci8&list=PLv9Pf9aNgemt61gjKQaYZHjvZlVp4OANq) about Google Sheets to understand the basic principles of rows, columns, cells, [relative and absolute cell references](https://edu.gcfglobal.org/en/googlespreadsheets/types-of-cell-references/1/), formulas, etc. You will find a lot of online resources and, indeed, the [Google Sheets Help Center](https://support.google.com/docs/topic/9054603?ref_topic=1382883) from Google itself!
 
 # Waypoint 11: Collect the List of Players
 
-We want to determine the list of distinct players who participated to the game session.
+We want to determine the list of distinct players who participated in the game session.
 
-First, we need to collect player names from each frag, and then we need to remove any duplicate names to only keep a list of distinct player names, and sort this list by alphabetical order:
+First, we need to collect player names from each frag, remove any duplicate names (only keeping a list of distinct player names), and sort this list in alphabetical order:
 
 ![Google Sheets Distinct Players](farcry_google_sheets_distinct_players.jpg)
 
@@ -475,13 +475,13 @@ Write a formula that places the distinct name of players in alphabetical order i
 
 You can do that with a subtle combination of [arrays](https://support.google.com/docs/answer/6208276) (using the bracket `{}` notation with semicolon) and the function [`UNIQUE`](https://support.google.com/docs/answer/3093198).
 
-**Warning: some dummies participating to a match may have killed no one; those dummies have just been beaten to death by other players.**
+**Warning: Some dummies participating in a match may not have killed anyone; they have just been beaten to death by other players.**
 
-_Hint: when you will be experimenting Google Sheets array, you may face some issue, especially if you try to provide the most generic expression possible:_
+_Hint: When you begin experimenting with Google Sheets array, you may face some issue, especially if you try to provide the most generic expression possible:_
 
 ![Google Sheets Row Expansion Issue](farcry_google_sheets_array_issue.png)
 
-_In such case, you might want to use the function [`FILTER`](https://support.google.com/docs/answer/3093197) in coordination with the function [`ISBLANK`](https://support.google.com/docs/answer/3093290). Up to you! ;)_
+_In such cases, you might want to use the function [`FILTER`](https://support.google.com/docs/answer/3093197) in coordination with the function [`ISBLANK`](https://support.google.com/docs/answer/3093290). Up to you! ;)_
 
 # Waypoint 12: Calculate Match Statistics
 
@@ -489,30 +489,30 @@ We want to calculate the following match statistics:
 
 - Number of times a player killed another;
 - Number of times a player was killed by another;
-- Number of times a player killed himself (stupid dumb!);
+- Number of times a player killed himself (what were you thinking?);
 - Player efficiency.
 
 ![Far Cry Match Statistics](farcry_google_sheets_match_statistics.png)
 
-1. Write a formula in the column `G`'s cells to calculate the number of times the player, defined in the corresponding column `F`'s cell of the same row, killed another.
+1. Write a formula in column `G`'s cells to calculate the number of times the player (defined in the corresponding column `F`'s cell of the same row) killed another.
 
-1. Write a formula in the column `H`'s cells to calculate the number of times the player has been killed by another.
+1. Write a formula in column `H`'s cells to calculate the number of times the player has been killed by another.
 
-1. Write a formula in the column `I`'s cells to calculate the number of times the player committed suicide.
+1. Write a formula in column `I`'s cells to calculate the number of times the player committed suicide.
 
-1. Write a formula in the column `J`'s cells to calculate the player's efficiency that corresponds to the simple formula `kills / (kills + deaths + suicides)`.
+1. Write a formula in column `J`'s cells to calculate the player's efficiency that corresponds to the simple formula `kills / (kills + deaths + suicides)`.
 
 # Waypoint 13: Split Frag History and Match Statistics into 2 Sheets
 
 The problem with our current sheet is that it combines both frag history and match statistics.
 
-When we want to import the frag history of one other match, we need to replace the current sheet with the data of the CSV file we are importing:
+When we want to import the frag history of  another match, we need to replace the current sheet with the data of the CSV file we are importing:
 
 ![CSV File Import](farcry_google_sheets_import_csv_file.png)
 
 We cannot use the option _Replace data at selected cell_, choosing the cell of the first column/row of our sheet, because this option keeps data of a previous imported CSV file that is longer than the CSV file we are importing. We need to replace all the data of the previous imported frag history.
 
-However, by using the option _Replace current sheet_, we erase the formula that collects and sorts the player names, and the formulas that calculate match statistics.
+However, by using the option _Replace current sheet_, we erase the formula that collects and sorts the player names and the formulas that calculate match statistics.
 
 We need to create another sheet in our Google Sheets document and recreate these formulas there.
 
@@ -520,33 +520,33 @@ We need to create another sheet in our Google Sheets document and recreate these
 
 1. Create a new sheet and name it `Match Statistics`;
 
-1. In the first rows of sheet `Match Statistics`, enter the following content in the respective columns: `Player Name`, `Kills`, `Deaths`, `Suicides`, `Efficiency`;
+1. In the first rows of the sheet `Match Statistics`, enter the following content in their respective columns: `Player Name`, `Kills`, `Deaths`, `Suicides`, `Efficiency`;
 
-1. Change the font size of this first row to `12`; change the background color with a dark blue; change the foreground color with a white;
+1. Change the font size of this first row to `12`; change the background color to a dark blue; change the foreground color to white;
 
-1. [Freeze this first row](https://www.youtube.com/watch?v=gaEr_Hwdhuo) to pin the name of the columns in the same place and always see this first row while we scroll;
+1. [Freeze this first row](https://www.youtube.com/watch?v=gaEr_Hwdhuo) to pin the name of the columns in the same place and always be able to see this first row while we scroll;
 
-1. In the sheet `Match Statistics`, delete columns over `E` as they are useless;
+1. In the sheet `Match Statistics`, delete columns after `E` as they are useless;
 
-1. In the sheet `Match Statistics`, starting with the 2nd row;, write in the column `A` the formula that collects the distinct player names, and sorts them in alphabetical order. You will need [to reference the sheet](https://support.google.com/docs/answer/75943) `Frag History`;
+1. In the sheet `Match Statistics`, starting with the 2nd row;, write in column `A` the formula that collects the distinct player names and sorts them in alphabetical order. You will need [to reference the sheet](https://support.google.com/docs/answer/75943) `Frag History`;
 
-1. Write the formulas in the other columns to calculates the match statistics. For most of these formulas, you will also need to reference the sheet `Frag History`;
+1. Write the formulas in the other columns to calculate the match statistics. For most of these formulas, you will also need to reference the sheet `Frag History`;
 
-_Note: we consider there is a maximum of 16 players who can join a match, or the game would start lagging._
+_Note: We consider that there is a maximum of 16 players who can join a match or the game would start lagging._
 
 ![Far Cry Match Statistics Sheet](farcry_google_sheets_match_statistics_sheet_01.png)
 
-You can now import another Far Cry frag history CSV file in the sheet `Frag History`. The match statistics defined in the sheet `Match Statistics` will be automatically updated. Great!
+You can now import another Far Cry frag history CSV file into the sheet `Frag History`. The match statistics defined in the sheet `Match Statistics` will be automatically updated. Great!
 
 | Frag History                                        | Match Statistics                                        |
 | --------------------------------------------------- | ------------------------------------------------------- |
 | ![](farcry_google_sheets_frag_history_sheet_02.png) | ![](farcry_google_sheets_match_statistics_sheet_02.png) |
 
-We can say that the sheet `Match Statistics` is a _view_ over the sheet `Frag History`. The data of the sheet `Match Statistics` are dynamically calculated from the sheet `Frag History`'s data. We will see this notion with relational database later in this mission.
+We can say that the sheet `Match Statistics` is a _view_ over the sheet `Frag History`. The data of the sheet `Match Statistics` is dynamically calculated from the sheet `Frag History`'s data. We will see this  with relational databases later in this mission.
 
 # Waypoint 14: Calculate the Overall Statistics of a Match
 
-Update the sheet `Match Statistics` to include the total number of kills, deaths, and suicides for the game session that has been imported.
+Update the sheet `Match Statistics` to include the total number of kills, deaths and suicides for the game session that has been imported.
 
 For example:
 
@@ -560,17 +560,17 @@ For example:
 
 ## Introduction to Data Model
 
-We want to keep every frag history of our Far Cry game sessions. If we were continuing to use Google Sheets, we would have to create as many sheets as we play Far Cry multiplayer game sessions. It would be a kind of unmanageable in Google Sheets.
+We want to keep every frag history of our Far Cry game sessions. If we were continuing to use Google Sheets, we would have to create as many sheets as we play Far Cry multiplayer game sessions. It would be kind of unmanageable in Google Sheets.
 
-We would rather prefer to store frag history and their respective match statistics in a persistent storage that we could then easily query to display information. This is what a [database](https://en.wikipedia.org/wiki/Database) is for. A **database** could be compared to a **spreadsheet**. It's basically a container.
+We would prefer to store frag history and their respective match statistics in a persistent storage that we could then easily query to display information. This is what a [database](https://en.wikipedia.org/wiki/Database) is for. A **database** could be compared to a **spreadsheet**. It's basically a container.
 
-A **sheet** in a database is called a **table**. It works almost the same. The only difference is that you need to name each column. You can also precisely define the type of each column (text, number, etc.), while Google Sheets simply guesses is (but it does sometimes wrong assertion).
+A **sheet** in a database is called a **table**. It works almost the same. The only difference is that you need to name each column. You can also precisely define the type of each column (text, number, etc.), while Google Sheets simply guesses (but sometimes it's incorrect).
 
 A **row** in a sheet is called a **record** in a table.
 
-Also, you might be already more or less aware that there are some kind of dependencies, also known as **relationships**, between the data. For instance, the frags are related to a match, so do the statistics.
+Also, you may already be more or less aware that there are some kinds of dependencies, also known as **relationships**, between the data. For instance, the frags are related to a match, the same applies to the statistics.
 
-The software application that enable users to manage such databases are called [relational databases management systems (RDBMS)](https://en.wikipedia.org/wiki/Relational_database_management_system). There are many RDBMS.
+The software application that enable users to manage such databases are called [relational database management systems (RDBMS)](https://en.wikipedia.org/wiki/Relational_database_management_system). There are many RDBMS.
 
 The simplest is [SQlite](https://www.sqlite.org). SQLite is built into a majority of smartphones and most computers and comes bundled inside countless other applications that people use every day.
 
@@ -578,50 +578,50 @@ The simplest is [SQlite](https://www.sqlite.org). SQLite is built into a majorit
 
 ## Entity Relationship Diagram (ERD)
 
-Before we store data into a RDBMS, we need to design the data model. Such design corresponds to an [Entity Relationship Diagram (ERD)](https://www.lucidchart.com/pages/er-diagrams) that illustrates how entities relate to each other within a system.
+Before we store data into an RDBMS, we need to design the data model. Such a design corresponds to an [Entity Relationship Diagram (ERD)](https://www.lucidchart.com/pages/er-diagrams) that illustrates how entities relate to each other within a system.
 
-ER models are typically drawn at up to [three levels of detail](https://www.guru99.com/data-modelling-conceptual-logical.html): [**conceptual data model**, **logical data model**, and **physical data model**](https://www.visual-paradigm.com/support/documents/vpuserguide/3563/3564/85378_conceptual,l.html).
+ER models are typically drawn up to [three levels of detail](https://www.guru99.com/data-modelling-conceptual-logical.html): [**conceptual data model**, **logical data model**, and **physical data model**](https://www.visual-paradigm.com/support/documents/vpuserguide/3563/3564/85378_conceptual,l.html).
 
 ## Logical Data Model
 
-Even if major RDBMS follow most of the database standards, there are always [some differences](https://www.sql-workbench.eu/dbms_comparison.html). For instance the data type, which defines the type of value that can be stored in a table column, can differ from a RDBMS to another.
+Even if major RDBMS follow most of the database standards, there are always [some differences](https://www.sql-workbench.eu/dbms_comparison.html). For instance the data type, which defines the type of value that can be stored in a table column, can differ from one RDBMS to another.
 
-When you design a data model, you want to describe the data in as much detail as possible, the entities, their attributes, and their relationships, without regard to how they will be physical implemented in a RDBMS. This is the [logical data model](https://www.omg.org/retail-depository/arts-odm-73/logical_data_model_concepts.htm).
+When you design a data model, you want to describe the data in as much detail as possible: the entities, their attributes and their relationships, without regard to how they will be physical implemented in an RDBMS. This is the [logical data model](https://www.omg.org/retail-depository/arts-odm-73/logical_data_model_concepts.htm).
 
-That enables you to select at a later stage a RDBMS into which the data model can be implemented. A logical data model can be more or less automatically converted to a physical data model with the help of tool.
+This enables you to select (at a later stage) an RDBMS into which the data model can be implemented. A logical data model can be more or less automatically converted to a physical data model with the help of tool.
 
 To translate Google sheets into entities is damn simple. The sheets `Frag History` and `Match Statistics` can be converted into two entities `match_frag` and `match_statistics`:
 
 ![Far Cry Entity Diagram Design](farcry_erd_initial.png)
 
-There are many [data modeling tools](https://en.wikipedia.org/wiki/Comparison_of_data_modeling_tools). Not all of them are free. Not all of them runs on Linux. We choose
-[Navicat Data Modeler](https://www.navicat.com/en/products/navicat-data-modeler) that is free and runs on Linux, but which essentials version is quite limited.
+There are many [data modeling tools](https://en.wikipedia.org/wiki/Comparison_of_data_modeling_tools). Not all of them are free and not all of them run on Linux. We chose
+[Navicat Data Modeler](https://www.navicat.com/en/products/navicat-data-modeler) it is free and runs on Linux, but which essentials version is quite limited.
 
-Create a new logical diagram, also known as [Entity-Relationship Diagram](https://www.smartdraw.com/entity-relationship-diagram/), and design the two entities `match_frag` and `match_statistics`:
+Create a new logical diagram, also known as an [Entity-Relationship Diagram](https://www.smartdraw.com/entity-relationship-diagram/) and design the two entities `match_frag` and `match_statistics`:
 
 | Frag History Entity Design                            | Match Statistics Entity Design                              |
 | ----------------------------------------------------- | ----------------------------------------------------------- |
 | ![](farcry_erd_entity_match_frag_edition_initial.png) | ![](farcry_erd_entity_match_statistics_edition_initial.png) |
 
-_Note 1: we prefer to use our own abstract data type `datetime`, `string`, `integer`, and `decimal`, rather than the data types the application Navicat suggests, which seem more specific to a particular RDBMS._
+_Note 1: We prefer to use our own abstract data type `datetime`, `string`, `integer`, and `decimal`, rather than the data types the application Navicat suggests, which seem more specific to a particular RDBMS._
 
-_Note 2: the attributes `frag_time` and `killer_name` of the table `match_frag` always contain a value, i.e., they CANNOT be null, while the attributes `victim_name` and `weapon_code` can be empty (when the player committed suicide), i.e., they can be null. What about the table `match_statistics`?_
+_Note 2: The attributes `frag_time` and `killer_name` of the table `match_frag` always contain a value, i.e., they CANNOT be null, while the attributes `victim_name` and `weapon_code` can be empty, they CAN be null (i.e., when the player committed suicide). What about the table `match_statistics`?_
 
 # Waypoint 16: Add Match Entity
 
-We have however an issue with our current data model: how does this model allow us to distinguish frags from distinct game sessions? We need a way to tag frags with the game session they belong to.
+However, we have an issue with our current data model: how does this model allow us to distinguish frags from distinct game sessions? We need a way to tag frags with the game session they belong to.
 
 We need to add a new entity `match` with the following attributes:
 
 - `match_id`: [identity attribute](https://en.wikipedia.org/wiki/Identity_column) of this match;
-- `start_time`: the time when the match started;
-- `end_time`: the time when the match ended;
+- `start_time`: the time the match started;
+- `end_time`: the time the match ended;
 - `game_mode`: the multiplayer mode that was played;
 - `map_name`: the name of the map that was played.
 
 ![Match Entity Edition](farcry_erd_entity_match.png)
 
-Where does this match identifier come from?! Far Cry engine doesn't log any game session identifier! This is a detail of implementation that we will solve later with the physical data model.
+Where does this match identifier come from?! The Far Cry engine doesn't log any game session identifier! This is a detail of implementation that we will solve later with the physical data model.
 
 For now, simply create this entity `match` as follows:
 
@@ -629,7 +629,7 @@ For now, simply create this entity `match` as follows:
 
 # Waypoint 17: Add Match Identifier to Match Frag Entity
 
-Modify the entity `match_frag` to add a attribute `match_id` with the same data type `integer`. Each frag will be tagged with the unique identification of the match this frag belongs to. We have now a way to distinguish frags from distinct game sessions.
+Modify the entity `match_frag` to add an attribute `match_id` with the data type `integer`. Each frag will be tagged with the unique identifier of the match this frag belongs to. We now have a way to distinguish frags from distinct game sessions.
 
 ![Entity Match Frag Final Design](farcry_erd_entity_match_frag_edition_final.png)
 
@@ -670,7 +670,7 @@ Select the solid line that represents the relationship between the two entities 
 
 # Waypoint 20: Add Match Statistics and Match Entities Relationship
 
-Proceed to the same modifications for the entity `match_statistics` that also references the entity `match`.
+Repeat the same modifications for the entity `match_statistics` that also reference the entity `match`.
 
 The final database diagram should looks like the following:
 
@@ -682,35 +682,35 @@ We have completed the design of our Far Cry data model! Entity-relationship diag
 
 ![](farcry_wallpaper_03.jpg)
 
-We should normally convert the logical data model to a physical data model for a given RDBMS. This physical data model can be used to generate [DDL statements](https://en.wikipedia.org/wiki/Data_definition_language) which can then be deployed to a database server.
+We should convert the logical data model to a physical data model for a given RDBMS. This physical data model can be used to generate [DDL statements](https://en.wikipedia.org/wiki/Data_definition_language) which can then be deployed to a database server.
 
 However, for practical reasons, we are going to manually create, in the next waypoints, database objects directly in our RDBMS, starting with SQLite, based on the logical data model we have just designed.
 
 # Waypoint 21: Create SQLite Database and Table Match
 
-SQLite is a relational database management system contained in a C programming library. In contrast to many other database management systems, SQLite is not a client–server database engine. The SQLite engine has no standalone processes with which an application program communicates. Instead, the SQLite library is linked in and thus becomes an integral part of an application program.
+SQLite is an RDBMS contained in a C programming library. In contrast to many other database management systems, SQLite is not a client–server database engine. The SQLite engine has no standalone processes with which an application program communicates. Instead, the SQLite library is linked in and thus becomes an integral part of an application program.
 
 SQLite stores the entire database as a single cross-platform file on the machine the application program runs (laptop/desktop, tablet, smartphone). That means you can directly edit this file to add objects, relationships, etc.
 
 Which application program could we use to edit an SQLite database file? There is the de facto [simple command-line inteface (CLI) program named `sqlite3`](https://sqlite.org/cli.html) that allows the user to manually enter and execute SQL statements against an SQLite database. We will see this tool later in this mission.
 
-For now, we are going to use a more visual tool. It will be a lot easier to start with. There are many of them. We choose [DB Browser for SQLite (DB4S)](https://sqlitebrowser.org/): it is an open source tool to create, design, and edit database files compatible with SQLite.
+For now, we are going to use a more visual tool. It will be a lot easier to start with. There are many of them. We chose [DB Browser for SQLite (DB4S)](https://sqlitebrowser.org/): it is an open source tool to create, design, and edit database files compatible with SQLite.
 
-Run this tool and create the new database `farcry`. Then create the table `match` and add the few columns corresponding to the attribute of the entity `match` in our logical data model.
+Run this tool and create a new database `farcry`. Then create a table `match` and add the few columns corresponding to the attribute of the entity `match` in our logical data model.
 
 [SQLite does not have a storage class set aside for storing dates and/or times](https://www.sqlite.org/datatype3.html#date_and_time_datatype). We are using the data type `TEXT` for storing date and time as [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) strings. SQLite supports built-in [date and time functions](https://www.sqlite.org/lang_datefunc.html) to manipulate ISO 8601 strings.
 
 ![SQLite Table Match](farcry_sqlite_table_match_edition.png)
 
-The DB Browser for SQLite program application automatically generates the [DDL (Data Definition Language)](https://en.wikipedia.org/wiki/Data_definition_language) statement [`CREATE TABLE`](https://www.sqlite.org/lang_createtable.html), which is displayed below the list of columns, to create the table `match` in the SQLite database, when you click on the button `OK`.
+The DB Browser for the SQLite program application automatically generates the [DDL (Data Definition Language)](https://en.wikipedia.org/wiki/Data_definition_language) statement [`CREATE TABLE`](https://www.sqlite.org/lang_createtable.html), which is displayed below the list of columns, to create the table `match` in the SQLite database, when you click on the `OK` button.
 
 # Waypoint 22: Define Table Match Identity Column
 
 As we said previously, we need a unique identifier to represent each game session, such as a unique number.
 
-But Far Cry engine's logs doesn't provide a unique number that references each game session. For such situation, the simplest solution is to use an [auto-increment](https://www.w3schools.com/sql/sql_autoincrement.asp) column. It automatically generates a unique number when a new record is inserted into the table. We also call such a column an [identity column](https://en.wikipedia.org/wiki/Identity_column).
+But Far Cry engine's logs don't provide a unique number that references each game session. For such a situation, the simplest solution is to use an [auto-increment](https://www.w3schools.com/sql/sql_autoincrement.asp) column. It automatically generates a unique number when a new record is inserted into the table. We also call such a column an [identity column](https://en.wikipedia.org/wiki/Identity_column).
 
-Modify the table `match` to indicate that the column `match_id` is an auto-increment, a primary key, and it is unique.
+Modify the table `match` to indicate that the column `match_id` is an auto-increment, a primary key, and that it is unique.
 
 # Waypoint 23: Create Tables Match Frag and Match Statistics
 
@@ -720,11 +720,11 @@ Create the tables `match_frag` and `match_statistics` with their corresponding c
 
 # Waypoint 24: Create Primary and Foreign Keys
 
-The tables `match_frag` and `match_statistics` have to be linked to the table `match` with their common column `match_id`.
+The tables `match_frag` and `match_statistics` have to be linked to the table `match` with their common column being `match_id`.
 
-The column `match_id` of table `match` is called a primary key. The column `match_id` of the table `match_frag` and `match_statistics` is called the [foreign key](https://www.essentialsql.com/what-is-the-difference-between-a-primary-key-and-a-foreign-key/). [Primary and foreign keys](https://www.youtube.com/watch?v=-CuY5ADwn24) are used to defined relationships between tables and to enforce [referential integrity](https://en.wikipedia.org/wiki/Referential_integrity) constraint. This relationship ensures that a frag cannot be stored in the table `match_frag` with a match identifer that does not exist in the table `match`. This prevents [orphaned records](https://database.guide/what-is-an-orphaned-record/).
+The column `match_id` of table `match` is called a primary key. The column `match_id` of the table `match_frag` and `match_statistics` is called the [foreign key](https://www.essentialsql.com/what-is-the-difference-between-a-primary-key-and-a-foreign-key/). [Primary and foreign keys](https://www.youtube.com/watch?v=-CuY5ADwn24) are used to define relationships between tables and to enforce the [referential integrity](https://en.wikipedia.org/wiki/Referential_integrity) constraint. This relationship ensures that a frag cannot be stored in the table `match_frag` with a match identifer that does not exist in the table `match`. This prevents [orphaned records](https://database.guide/what-is-an-orphaned-record/).
 
-Modify tables `match_frag` and `match_statistics` to add [foreign key constraints](https://www.sqlite.org/foreignkeys.html) that reference table `match`.
+Modify tables `match_frag` and `match_statistics` to add [foreign key constraints](https://www.sqlite.org/foreignkeys.html) that reference the table `match`.
 
 We would like to ensure the following [actions](https://www.sqlite.org/foreignkeys.html#fk_actions):
 
@@ -743,11 +743,11 @@ Write a function `insert_match_to_sqlite` that takes the following arguments:
 - `game_mode`: multiplayer mode of the game session:
   - `ASSAULT`: there are two teams, one is defending a flag and the other
     team is attacking it. Each maps has 3 flags and if after 20 minutes
-    not all flags are captured teams switch. The flags are on fixed
+    not all flags are captured, the teams switch sides. The flags are on fixed
     positions in the map and only one flag at the time is active;
   - `TDM` (Team DeathMatch): the are two teams. Players of one team kill
     members of the other team;
-  - `FFA` (Free-For-All): players kill anyone they kind find.
+  - `FFA` (Free-For-All): players kill anyone they can find.
 - `map_name`: name of the map that was played.
 - `frags`: a list of tuples of the following form:
 
@@ -760,9 +760,9 @@ Write a function `insert_match_to_sqlite` that takes the following arguments:
   - `victim_name` (optional): username of the player who has been fragged;
   - `weapon_code` (optional): code of the weapon that was used to frag.
 
-The function `insert_match_to_sqlite` [inserts](https://www.sqlite.org/lang_insert.html) a new record into the table `match` with the arguments `start_time`, `end_time`, `game_mode`, and `map_name`, using [a `INSERT` statement](https://www.youtube.com/watch?v=UrbItNGZU48). You need to use the Python module [`sqlite3`](https://docs.python.org/3.7/library/sqlite3.html).
+The function `insert_match_to_sqlite` [inserts](https://www.sqlite.org/lang_insert.html) a new record into the table `match` with the arguments `start_time`, `end_time`, `game_mode`, and `map_name`, using [an `INSERT` statement](https://www.youtube.com/watch?v=UrbItNGZU48). You need to use the Python module [`sqlite3`](https://docs.python.org/3.7/library/sqlite3.html).
 
-The function `insert_match_to_sqlite` returns the identification of the match that has been inserted. This information is retrieved from the SQLite database using the method [`lastrowid`](https://docs.python.org/3.7/library/sqlite3.html?highlight=lastrowid#sqlite3.Cursor.lastrowid).
+The function `insert_match_to_sqlite` returns the identifier of the match that has been inserted. This information is retrieved from the SQLite database using the method [`lastrowid`](https://docs.python.org/3.7/library/sqlite3.html?highlight=lastrowid#sqlite3.Cursor.lastrowid).
 
 ```python
 >>> log_data = read_log_file('./logs/log01.txt')
@@ -776,18 +776,18 @@ The function `insert_match_to_sqlite` returns the identification of the match th
 
 ![Table Match Data Browsing](farcry_sqllite_table_match_data_browsing.png)
 
-**WARNING**: you might find that your current implementation of the function `insert_match_to_sqlite` doesn't actually persists the data you have inserted into the database, while everything seems perfect, no error is raised. This is related to [transaction](http://db4beginners.com/blog/relationaldb-transaction/), one of the most fundamental concept of relational database. Without going into the details, a [transaction](https://en.wikipedia.org/wiki/Database_transaction) is used to execute several SQL statements, and to commit or rollback all the changes made by these statements during this transaction: either the transaction succeeds and all updates take effect, or otherwise, all the changes are cancelled.
+**WARNING**: You might find that your current implementation of the function `insert_match_to_sqlite` doesn't actually persist the data you have inserted into the database, while everything seems perfect, no error is raised. This is related to [transaction](http://db4beginners.com/blog/relationaldb-transaction/), one of the most fundamental concepts of relational database. Without going into details, a [transaction](https://en.wikipedia.org/wiki/Database_transaction) is used to execute several SQL statements and to commit or rollback all the changes made by these statements during this transaction: either the transaction succeeds and all updates take effect, otherwise, all the changes are cancelled.
 
-By default, when Python `sqlite3` module opens a connection to a database, it [starts a transaction](https://docs.python.org/3.7/library/sqlite3.html#sqlite3-controlling-transactions). You need to [commit](https://docs.python.org/3.7/library/sqlite3.html#sqlite3.Connection.commit) the implicit transaction, before closing the connection, to make permanent all changes performed in this transaction, otherwise all your changes are automatically rolled back.
+By default, when the Python module `sqlite3` opens a connection to a database, it [starts a transaction](https://docs.python.org/3.7/library/sqlite3.html#sqlite3-controlling-transactions). You need to [commit](https://docs.python.org/3.7/library/sqlite3.html#sqlite3.Connection.commit) the implicit transaction, before closing the connection, to make permanent all changes performed in this transaction, otherwise all your changes are automatically rolled back.
 
-You can use another technique that enables you to autocommit your changes with the connection to the database is closed: you can wrap all the statements with a [context manager](https://docs.python.org/3.7/library/sqlite3.html#using-the-connection-as-a-context-manager). In the event of an exception, the transaction is rolled back; otherwise, the transaction is committed.
+You can use another technique that enables you to autocommit your changes with the connection to a database that is closed: you can wrap all the statements with a [context manager](https://docs.python.org/3.7/library/sqlite3.html#using-the-connection-as-a-context-manager). In the event of an exception, the transaction is rolled back; otherwise, the transaction is committed.
 
 # Waypoint 26: Insert Match Frags into SQLite
 
 Write a function `insert_frags_to_sqlite` that takes the following arguments:
 
 - `connection`: a `sqlite3` `Connection` object;
-- `match_id`; the identification of a match;
+- `match_id`; the identifier of a match;
 - `frags`: a list of frags, as passed to the function `insert_match_to_sqlite`, that occurred during this match.
 
 The function `insert_frags_to_sqlite` [inserts new records](https://docs.python.org/3.7/library/sqlite3.html#sqlite3.Cursor.executemany) into the table `match_frag`.
@@ -802,7 +802,7 @@ Integrate this function in the function `insert_match_to_sqlite`.
 
 We are going to use the [Data Manipulation Language (DML)](https://en.wikipedia.org/wiki/Data_manipulation_language), a sublanguage of SQL, to calculate some statistics about game sessions.
 
-We are not going to use any visual tool for this, but the [simple command-line inteface (CLI) program named sqlite3](https://sqlite.org/cli.html). We are nerds, aren't we?
+We are not going to use any visual tools for this, but the [simple command-line inteface (CLI) program named sqlite3](https://sqlite.org/cli.html). We are nerds, aren't we ... ?
 
 ![SQLite CLI](farcry_sqlite_cli_introduction.png)
 
@@ -1382,7 +1382,7 @@ match_id    player_name  kill_count  death_count  suicide_count  efficiency
 
 We have previously designed the logical data model of our Far Cry system information with the entity `match_statistics`. We have created the corresponding table `match_statistics`.
 
-However, this data model requires to calculate and insert statistics into the table `match_statistics` each time data of a match have been imported into both tables `match` and `match_frags`.
+However, this data model requires to calculate and insert statistics into the table `match_statistics` each time data of a match have been imported into both tables `match` and `match_frag`.
 
 [Delete the table](https://sqlite.org/lang_droptable.html) `match_statistics` and [create a view](https://www.sqlite.org/lang_createview.html) with the same name `match_statistics` that return the result of the previous waypoint.
 
@@ -1412,7 +1412,7 @@ SELECT *
   ORDER BY efficiency ASC;
 ```
 
-If your tables `match` and `match_frags` have hundreds of thousands of records, even if you were only interested in player efficiency for the particular match `13`, this previous query will calculate player efficency for **every** match, before returning player efficiency for match `13`. This would be huge waste of CPU and memory consumption!
+If your tables `match` and `match_frag` have hundreds of thousands of records, even if you were only interested in player efficiency for the particular match `13`, this previous query will calculate player efficency for **every** match, before returning player efficiency for match `13`. This would be huge waste of CPU and memory consumption!
 
 You might want to persist these results instead of calculating them again and again. For that we need to use a [materialized view](https://en.wikipedia.org/wiki/Materialized_view).
 
@@ -1454,7 +1454,7 @@ farcry=#
 
 # Waypoint 47: Create Tables Match and Match Frags
 
-We are going now to create the tables `match` and `match_frags`.
+We are going now to create the tables `match` and `match_frag`.
 
 This time, we will manage the identification of a match a bit differently. We have used an auto-incremented integers to identify a match with SQLite. There may be other teams in the world are playing Far Cry and calculating statistics about their game sessions. If we wanted to share statistics of all these Far Cry game sessions, we would face an issue with duplicated match identifications as these identifications will be generated on different RDBMS that all start generating identifications with `0`. We need to generate unique match identifications. This is what [Universally Unique IDentifier (UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier) a is for.
 
@@ -1488,7 +1488,7 @@ We are now going to create the tables `match` and `match_frag` with [Data Defini
 | `game_mode`  | [`text`](https://www.postgresql.org/docs/current/datatype-character.html)          | No        |                      |
 | `map_name`   | [`text`](https://www.postgresql.org/docs/current/datatype-character.html)          | No        |                      |
 
-Create the table `match_frags` with the following columns:
+Create the table `match_frag` with the following columns:
 
 | Name          | Data Type        | Nullable? | Default Value |
 | ------------- | ---------------- | --------- | ------------- |
@@ -1542,7 +1542,7 @@ Write a function `insert_match_to_postgresql` that takes the following arguments
 
 The function `insert_match_to_postgresql` inserts a new record into the table `match` with the arguments `start_time`, `end_time`, `game_mode`, and `map_name`, using a [`INSERT` statement](https://www.postgresql.org/docs/current/sql-insert.html). You need to use the Python module [`psycopg2`](http://initd.org/psycopg/docs/).
 
-The function `insert_match_to_postgresql` inserts all the frags into the table `match_statistics`.
+The function `insert_match_to_postgresql` inserts all the frags into the table `match_frag`.
 
 The function `insert_match_to_postgresql` returns the identification of the match that has been inserted.
 
@@ -1776,7 +1776,7 @@ The class of a player is determined by the weapon he used the most to kill other
 |                                                 | Class      | Weapons                                                                                                                                                                                 |
 | ----------------------------------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | ![Hitman](farcry_class_hitman.png)              | Hitman     | `Machete`, `Falcon`, `MP5`                                                                                                                                                              |
-| ![Sniper](farcry_class_sniper.png)              | Sniper     | `SniperRifler`                                                                                                                                                                          |
+| ![Sniper](farcry_class_sniper.png)              | Sniper     | `SniperRifle`                                                                                                                                                                           |
 | ![Commando](farcry_class_commando.jpg)          | Commando   | `AG36`, `OICW`, `P90`, `M4`, `Shotgun`, `M249`                                                                                                                                          |
 | ![Psychotic Killer](farcry_class_psychotic.jpg) | Psychopath | `Rocket`, `VehicleRocket`, `HandGrenade`, `StickExplosive`, `Boat`, `Vehicle`, `VehicleMountedRocketMG`, `VehicleMountedAutoMG`, `MG`, `VehicleMountedMG`, `OICWGrenade`, `AG36Grenade` |
 
@@ -1819,7 +1819,7 @@ farcry=# SELECT get_killer_class('MP5');
  Hitman
 (1 row)
 
-farcry=# SELECT get_killer_class('SniperRifler');
+farcry=# SELECT get_killer_class('SniperRifle');
  get_killer_class
 ------------------
  Sniper
@@ -1915,6 +1915,16 @@ where:
 
 For example:
 
+from farcry import *
+log_data = read_log_file('./logs/log08.txt')
+frags = parse_frags(log_data)
+serial_killers = calculate_serial_killers(frags)
+for player_name, kill_series in serial_killers.items():
+     print('[%s]' % player_name)
+     print('\n'.join([', '.join(([str(e) for e in kill]))
+         for kill in kill_series]))
+
+
 ```python
 >>> log_data = read_log_file('./logs/log08.txt')
 >>> frags = parse_frags(log_data)
@@ -1924,61 +1934,29 @@ For example:
 ...     print('\n'.join([', '.join(([str(e) for e in kill]))
 ...         for kill in kill_series]))
 [Transporter]
-2019-04-12 05:54:35+00:00, lythanhphu, M4
-2019-04-12 05:54:59+00:00, lythanhphu, Falcon
-2019-04-12 05:55:04+00:00, lythanhphu, Falcon
-2019-04-12 05:59:04+00:00, lythanhphu, AG36
-2019-04-12 06:04:06+00:00, lythanhphu, Falcon
-2019-04-12 06:04:44+00:00, lythanhphu, Falcon
-2019-04-12 06:08:17+00:00, lythanhphu, Falcon
-2019-04-12 06:08:47+00:00, lythanhphu, AG36
+2019-04-12 05:44:20+00:00, lythanhphu, AG36
+2019-04-12 05:45:58+00:00, lythanhphu, AG36
 [moomoo]
-2019-04-12 05:33:04+00:00, lythanhphu, P90
-2019-04-12 05:35:02+00:00, lythanhphu, P90
-2019-04-12 05:35:54+00:00, lythanhphu, M4
-2019-04-12 05:44:00+00:00, lythanhphu, SniperRifle
+2019-04-12 05:31:24+00:00, shogun, M4
+2019-04-12 05:31:43+00:00, lythanhphu, M4
 [jason]
 2019-04-12 05:54:51+00:00, moomoo, SniperRifle
 2019-04-12 05:55:25+00:00, lythanhphu, SniperRifle
-2019-04-12 05:59:43+00:00, lythanhphu, M249
 [lythanhphu]
-2019-04-12 05:59:25+00:00, shogun, AG36
-2019-04-12 05:59:42+00:00, moomoo, OICWGrenade
-2019-04-12 06:00:20+00:00, Transporter, Rocket
-2019-04-12 06:00:52+00:00, jason, P90
-2019-04-12 06:01:16+00:00, Transporter, VehicleRocket
-2019-04-12 06:01:16+00:00, shogun, VehicleRocket
-2019-04-12 06:01:49+00:00, Transporter, VehicleRocket
-2019-04-12 06:02:06+00:00, shogun, Falcon
-2019-04-12 06:02:12+00:00, jason, Falcon
-2019-04-12 06:03:46+00:00, Transporter, OICW
-2019-04-12 06:04:26+00:00, Transporter, Falcon
-2019-04-12 06:04:58+00:00, shogun, M4
-2019-04-12 06:05:50+00:00, shogun, M249
-2019-04-12 06:06:23+00:00, moomoo, OICW
-2019-04-12 06:06:28+00:00, jason, OICW
-2019-04-12 06:06:57+00:00, moomoo, M4
-2019-04-12 06:07:04+00:00, jason, HandGrenade
-2019-04-12 06:07:10+00:00, moomoo, Shotgun
-2019-04-12 06:07:59+00:00, Transporter, AG36
-2019-04-12 06:08:10+00:00, Transporter, AG36
-2019-04-12 06:08:28+00:00, moomoo, VehicleRocket
-2019-04-12 06:09:28+00:00, shogun, Rocket
-2019-04-12 06:09:43+00:00, Transporter, Rocket
-2019-04-12 06:09:48+00:00, moomoo, Rocket
-2019-04-12 06:10:13+00:00, shogun, Boat
-2019-04-12 06:10:48+00:00, moomoo, M4
-2019-04-12 06:10:59+00:00, jason, VehicleRocket
-2019-04-12 06:11:16+00:00, Transporter, VehicleRocket
-2019-04-12 06:11:28+00:00, Transporter, VehicleRocket
-2019-04-12 06:11:31+00:00, moomoo, VehicleRocket
+2019-04-12 05:13:44+00:00, Transporter, AG36
+2019-04-12 05:13:52+00:00, Transporter, AG36
+2019-04-12 05:14:01+00:00, Transporter, AG36
+2019-04-12 05:14:25+00:00, moomoo, AG36
+2019-04-12 05:15:24+00:00, Transporter, AG36
+2019-04-12 05:15:49+00:00, moomoo, VehicleRocket
+2019-04-12 05:16:06+00:00, moomoo, AG36Grenade
+2019-04-12 05:16:21+00:00, Transporter, AG36
+2019-04-12 05:16:51+00:00, moomoo, VehicleRocket
+2019-04-12 05:16:56+00:00, jason, VehicleRocket
 [shogun]
-2019-04-12 05:48:23+00:00, Transporter, VehicleRocket
-2019-04-12 05:51:23+00:00, lythanhphu, M4
-2019-04-12 05:53:34+00:00, lythanhphu, M4
-2019-04-12 05:59:33+00:00, lythanhphu, Falcon
-2019-04-12 06:00:28+00:00, lythanhphu, M4
-2019-04-12 06:03:08+00:00, lythanhphu, AG36
+2019-04-12 05:37:36+00:00, lythanhphu, MG
+2019-04-12 05:38:28+00:00, jason, MG
+2019-04-12 05:42:12+00:00, lythanhphu, MP5
 ```
 
 # Waypoint 54: Determine Serial Losers
@@ -1987,7 +1965,7 @@ A serial looser is a player who has been killed (or committed suicides) several 
 
 ![Serial Loser](farcry_statistics_serial_loser.png)
 
-Write a Python function `calculate_serial_losers` that takes an argument `frags` and returns a dictionary of killers with their longest kill series, where the key corresponds to the name of a player and the value corresponds to a list of frag times of the player's longest series:
+Write a Python function `calculate_serial_losers` that takes an argument `frags` and returns a dictionary of players (victims) with their longest death series, where the key corresponds to the name of a player and the value corresponds to a list of frag times of the player's longest series:
 
 ```python
 {

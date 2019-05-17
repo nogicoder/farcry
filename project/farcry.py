@@ -193,6 +193,11 @@ def prettify_frags(frags):
     return prettified_frags
 
 
+def parse_game_session_start_and_end_times(log_data):
+    pass
+
+
+
 
 if __name__ == "__main__":
     import json
@@ -211,10 +216,7 @@ if __name__ == "__main__":
     # print(my_json_string)
     
     wp7 = prettify_frags(wp5_6)
-    # print(wp7)
-    my_json_string = json.dumps(wp7,indent=2)
-    print(my_json_string)
-    
+    # print('\n'.join(wp7))
 
    
     
