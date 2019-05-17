@@ -1,5 +1,68 @@
 #!/usr/bin/python3
-import json
+
+
+dictionary_emoji = {
+    'Killer': '\U0001F61D',
+    'Victim': '\U0001F621',
+    'Vehicle': '\U0001F699',
+    'Falcon': '\U0001F52B',
+    'Shotgun': '\U0001F52B',
+    'P90': '\U0001F52B',
+    'MP5': '\U0001F52B',
+    'M4': '\U0001F52B',
+    'AG36': '\U0001F52B',
+    'OICW': '\U0001F52B',
+    'SniperRifle': '\U0001F52B',
+    'M249': '\U0001F52B',
+    'VehicleMountedAutoMG': '\U0001F52B',
+    'VehicleMountedMG': '\U0001F52B',
+    'HandGrenade': '\U0001F4A3',
+    'AG36Grenade': '\U0001F4A3',
+    'OICWGrenade': '\U0001F4A3',
+    'StickyExplosive': '\U0001F4A3',
+    'Rocket': '\U0001F680',
+    'VehicleMountedRocketMG': '\U0001F680',
+    'VehicleRocket': '\U0001F680',
+    'Machete': '\U0001F52A',
+    'Boat': '\U0001F6A4'
+}
+
+# Emoji Icons
+CHARACTER_BOAT = '🚤'
+CHARACTER_AUTOMOBILE = '🚙'
+CHARACTER_VICTIM = '😦'
+CHARACTER_KILLER = '😛'
+CHARACTER_SUICIDE = '☠'
+CHARACTER_GUN = '🔫'
+CHARACTER_GRENADE = '💣'
+CHARACTER_ROCKET = '🚀'
+CHARACTER_MACHETE = '🔪'
+
+weapon_icon = {
+    'Vehicle': CHARACTER_AUTOMOBILE,
+    'Falcon': CHARACTER_GUN,
+    'Shotgun': CHARACTER_GUN,
+    'P90': CHARACTER_GUN,
+    'MP5': CHARACTER_GUN,
+    'M4': CHARACTER_GUN,
+    'AG36': CHARACTER_GUN,
+    'OICW': CHARACTER_GUN,
+    'SniperRifle': CHARACTER_GUN,
+    'M249': CHARACTER_GUN,
+    'VehicleMountedAutoMG': CHARACTER_GUN,
+    'VehicleMountedMG': CHARACTER_GUN,
+    'HandGrenade': CHARACTER_GRENADE,
+    'AG36Grenade': CHARACTER_GRENADE,
+    'OICWGrenade': CHARACTER_GRENADE,
+    'StickyExplosive': CHARACTER_GRENADE,
+    'Rocket': CHARACTER_ROCKET,
+    'VehicleMountedRocketMG': CHARACTER_ROCKET,
+    'VehicleRocket': CHARACTER_ROCKET,
+    'Machete': CHARACTER_MACHETE,
+    'Boat': CHARACTER_BOAT
+}
+
+
 def read_log_file(log_file_pathname):
     """
     Waypoint 1: Read Game Session Log File
@@ -97,26 +160,61 @@ def parse_frags(log_data):
     for frag in rough_frags:
         frag_time = start_time.replace(minute=int(frag[0][:2]), second=int(frag[0][3:]))
         if frag_time < start_time:
-            frag_time = start_time.replace(hour= start_hour + 1, minute=int(frag[0][:2]), second=int(frag[0][3:]))
+            frag_time = start_time.replace(hour=start_hour+1, minute=int(frag[0][:2]), second=int(frag[0][3:]))
         line = list(frag)
         line.pop(0) # del time
         line.pop(2) # del with/itself
+
+        if line[1] == '': # clear when player is killed by itself 
+            line.pop()
+            line.pop()
+
         if len(frag[-1]) > 0: # del space
             line[-1] = frag[-1][1:]
-        line = [frag_time.isoformat()] + line # combine frag
+        line = [frag_time] + line # combine frag
         frags.append(tuple(line)) # add to big frags
     rough_frags.clear()
     return frags
+
+
+def prettify_frags(frags):
+    """
+    Waypoint 7: Prettify Frag History
+    """
+    # print(frags)
+    prettified_frags = []
+    for frag in frags:
+        if len(frag) == 4: # (frag_time, killer_name, victim_name, weapon_code)
+            line = '[' + frag[0].isoformat() + '] ' + CHARACTER_KILLER + ' ' + frag[1] + ' ' + weapon_icon[frag[3]] + ' ' + CHARACTER_VICTIM + ' ' + frag[2]
+        else: # len = 2 (frag_time, killer_name)
+            line = '[' + frag[0].isoformat() + '] ' + CHARACTER_VICTIM + ' ' + frag[1] + ' ' + CHARACTER_SUICIDE
+        prettified_frags.append(line)
+
+    return prettified_frags
+
 
 
 if __name__ == "__main__":
     import json
 
     log_data = read_log_file("../logs/log02.txt")
+
     wp2_3 = parse_log_start_time(log_data)
     # print(wp2_3)
+    
     wp4 = parse_match_mode_and_map(log_data)
     # print(wp4, type(wp4))
+    
     wp5_6 = parse_frags(log_data)
-    my_json_string = json.dumps(wp5_6, indent = 2, sort_keys=True)
+    # print(wp5_6)
+    # my_json_string = json.dumps(wp5_6,indent=2)
+    # print(my_json_string)
+    
+    wp7 = prettify_frags(wp5_6)
+    # print(wp7)
+    my_json_string = json.dumps(wp7,indent=2)
     print(my_json_string)
+    
+
+   
+    
