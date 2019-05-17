@@ -25,7 +25,7 @@ def parse_log_start_time(log_data):
     """
     Waypoint 2 + 3: Parse Far Cry Engine's Start Time + Time Zone
     ---
-    Parse this date and time information to determine later the timestamp of each frag.
+    Parse date and time information to determine later the timestamp of each frag.
     ---
     @param {str} log_data: content of log file
     @return {object} start_time:(datetime.datetime) represent the time the Far Cry engine started to log at.
@@ -71,6 +71,11 @@ def parse_frags(log_data):
     """
     Waypoint 5: Parse Frag History
     Waypoint 6: Include Time Zone To Frag Timestamps
+    ---
+    @param {str} log_data: content of log file
+    @return {list(tuple)} frags: infomation of each frag(time*, killer*, victim, weapon)
+    *: require
+    non-*: optional
     """
 
     from re import findall
@@ -78,13 +83,14 @@ def parse_frags(log_data):
 
     # (frag_time, killer_name)
     # (frag_time, killer_name, victim_name, weapon_code)
+    # <(frag_time*)> <Lua> (killer_name*) killed (victim_name) itself/with ( weapon_code)
 
     patterm = "<(\d{2}:\d{2})> <.*> (.*) killed (.*)(itself| with)(.*)"
     rough_frags = findall(patterm, log_data)
 
     start_time = parse_log_start_time(log_data)
     frags = []
-    
+
     for frag in rough_frags:
         frag_time = start_time.replace(minute=int(frag[0][:2]), second=int(frag[0][3:]))
         line = list(frag)
@@ -94,6 +100,8 @@ def parse_frags(log_data):
             line[-1] = frag[-1][1:]
         line = [frag_time] + line # combine frag
         frags.append(tuple(line)) # add to big frags
+
+    rough_frags.clear()
     return frags
 
 
