@@ -1,32 +1,5 @@
 #!/usr/bin/python3
 
-
-dictionary_emoji = {
-    'Killer': '\U0001F61D',
-    'Victim': '\U0001F621',
-    'Vehicle': '\U0001F699',
-    'Falcon': '\U0001F52B',
-    'Shotgun': '\U0001F52B',
-    'P90': '\U0001F52B',
-    'MP5': '\U0001F52B',
-    'M4': '\U0001F52B',
-    'AG36': '\U0001F52B',
-    'OICW': '\U0001F52B',
-    'SniperRifle': '\U0001F52B',
-    'M249': '\U0001F52B',
-    'VehicleMountedAutoMG': '\U0001F52B',
-    'VehicleMountedMG': '\U0001F52B',
-    'HandGrenade': '\U0001F4A3',
-    'AG36Grenade': '\U0001F4A3',
-    'OICWGrenade': '\U0001F4A3',
-    'StickyExplosive': '\U0001F4A3',
-    'Rocket': '\U0001F680',
-    'VehicleMountedRocketMG': '\U0001F680',
-    'VehicleRocket': '\U0001F680',
-    'Machete': '\U0001F52A',
-    'Boat': '\U0001F6A4'
-}
-
 # Emoji Icons
 CHARACTER_BOAT = '🚤'
 CHARACTER_AUTOMOBILE = '🚙'
@@ -44,6 +17,7 @@ weapon_icon = {
     'Shotgun': CHARACTER_GUN,
     'P90': CHARACTER_GUN,
     'MP5': CHARACTER_GUN,
+    'MG': CHARACTER_GUN,
     'M4': CHARACTER_GUN,
     'AG36': CHARACTER_GUN,
     'OICW': CHARACTER_GUN,
@@ -119,6 +93,8 @@ def parse_log_start_time(log_data):
 def parse_match_mode_and_map(log_data):
     """
     Waypoint 4: Parse Match Session's Mode and Map
+
+    Find more (mode, map) in 3,4,5,7,8,9, 10
     ---
     @param {str} log_data: content of log file
     @return {tuple} (mode, map).
@@ -180,30 +156,48 @@ def parse_frags(log_data):
 def prettify_frags(frags):
     """
     Waypoint 7: Prettify Frag History
+    KeyError 'MG' 1, 3, 4, 5, 7, 8, 9
+    adding 'MG' in emoji table
     """
-    # print(frags)
     prettified_frags = []
     for frag in frags:
         if len(frag) == 4: # (frag_time, killer_name, victim_name, weapon_code)
-            line = '[' + frag[0].isoformat() + '] ' + CHARACTER_KILLER + ' ' + frag[1] + ' ' + weapon_icon[frag[3]] + ' ' + CHARACTER_VICTIM + ' ' + frag[2]
+            line = '[' + frag[0].isoformat() + '] ' + CHARACTER_KILLER + '  ' + frag[1] + ' ' + weapon_icon[frag[3]] + '  ' + CHARACTER_VICTIM + '  ' + frag[2]
         else: # len = 2 (frag_time, killer_name)
-            line = '[' + frag[0].isoformat() + '] ' + CHARACTER_VICTIM + ' ' + frag[1] + ' ' + CHARACTER_SUICIDE
+            line = '[' + frag[0].isoformat() + '] ' + CHARACTER_VICTIM + '  ' + frag[1] + ' ' + CHARACTER_SUICIDE
         prettified_frags.append(line)
 
     return prettified_frags
 
 
 def parse_game_session_start_and_end_times(log_data):
-    pass
-
+    """
+    Waypoint 8: Determine Game Session's Start and End Times
+    ---
+    :param {str} log_data: content of log file
+    :return {tuple(start, end)}:
+    non statistics log01.tsxt
+    more then one statistics log05.txt
+    """
+    # from re import findall
+    # start = findall(r"<.*> Precaching level ... <(.*)> done", log_data)[0].split(':')
+    # end = findall(r"<(.*)> == Statistics.*==", log_data)[0]
+    # if end:
+    #     end = end.split(':')
+    # else:
+    #     end = findall(r"<(.*)> ERROR: .3#SCRIPT ERROR File: =C, Function: _ERRORMESSAGE,", log_data)[0].split(':')
+    # start_session = dictionary_data['start_time'].replace(minute=int(start[0]), second=int(start[1]))
+    # end_session = dictionary_data['start_time'].replace(minute=int(end[0]), second=int(end[1]))
+    # result = (start_session, end_session)
+    # return result
 
 
 
 if __name__ == "__main__":
     import json
 
-    log_data = read_log_file("../logs/log02.txt")
-
+    log_data = read_log_file("../logs/log05.txt")
+    # print(len(log_data))
     wp2_3 = parse_log_start_time(log_data)
     # print(wp2_3)
     
@@ -216,7 +210,7 @@ if __name__ == "__main__":
     # print(my_json_string)
     
     wp7 = prettify_frags(wp5_6)
-    # print('\n'.join(wp7))
+    print('\n'.join(wp7))
 
    
     
