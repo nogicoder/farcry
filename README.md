@@ -397,6 +397,61 @@ For example:
 
 # Waypoint 8: Determine Game Session's Start and End Times
 
+When a user runs Far Cry, the Far Cry application starts to store traces information in the text file name `log.txt`. This does not correspond to a game session yet.
+
+A game session starts when the user selects the game mode and the map to play on, and when the user launches the game session. **The game session starts when the map is fully loaded**.
+
+| Launch Game Session                 | Load Map                                 |
+| ----------------------------------- | ---------------------------------------- |
+| ![](farcry_game_session_launch.png) | ![](farcry_game_session_map_loading.png) |
+
+_Hint: in the Far Cry log's file, you will information that indicates the time it took to load the map. That's a fairly good indication that the map has been loaded... :)_
+
+On another hand, a game session does not end when at the last frag. A game session ends just before Far Cry calculates the statistics.
+
+For example:
+
+```text
+<13:29> ================================================================================
+<13:29> == Statistics ==
+<13:29> ================================================================================
+<13:29> Servername: intek's Server
+<13:29> Levelname: mp_surf
+<13:29> ================================================================================
+<13:29> == Player: ==
+<13:29> ================================================================================
+<13:29> Player: lythanhphu
+<13:29> nKill=143
+<13:29> nHeadshot=11
+<13:29> nBulletShot=0
+<13:29> nSelfKill=3
+<13:29> nBulletHit=0
+<13:29> Player: Transporter
+<13:29> nKill=25
+<13:29> nHeadshot=5
+<13:29> nBulletShot=0
+<13:29> nSelfKill=0
+<13:29> nBulletHit=0
+<13:29> Player: moomoo
+<13:29> nKill=10
+<13:29> nHeadshot=2
+<13:29> nBulletShot=0
+<13:29> nSelfKill=2
+<13:29> nBulletHit=0
+<13:29> Player: jason
+<13:29> nKill=8
+<13:29> nHeadshot=1
+<13:29> nBulletShot=0
+<13:29> nSelfKill=0
+<13:29> nBulletHit=0
+<13:29> Player: shogun
+<13:29> nKill=21
+<13:29> nHeadshot=3
+<13:29> nBulletShot=0
+<13:29> nSelfKill=1
+<13:29> nBulletHit=0
+```
+
 Write a function `parse_game_session_start_and_end_times` that takes an argument `log_data` representing the data read from a Far Cry server's log file (and possibly some other arguments [you need to choose wisely](https://www.youtube.com/watch?v=oF2UrYSDb3k)), and returns the approximate start and end time of the game session.
 
 For example:
@@ -412,6 +467,30 @@ For example:
  >>> str(start_time), str(end_time)
 ('2019-03-12 12:37:24-05:00', '2019-03-12 12:57:24-05:00')
 ```
+
+Note: it could happen that Far Cry engine crashed before the end of a game session. Far Cry engine then doesn't provide any game statistics.
+
+```text
+(...)
+<37:38> <Lua> cynthia killed Jack The Ripper with OICW
+<37:55> <Lua> Jack The Ripper killed itself
+<38:01> <Lua> cyap killed cynthia with OICW
+<38:12> <Lua> cyap killed cynthia with OICWGrenade
+<38:18> ERROR: $3#SCRIPT ERROR File: =C, Function: _ERRORMESSAGE,
+error: stack overflow
+stack traceback:
+   1:  `index' tag method [C]
+   2:  method `DrawElement' at line 1042 [file `scripts/gui/hudcommon.lua']
+   3:  method `DrawGauge' at line 1970 [file `scripts/gui/hudcommon.lua']
+   4:  method `DrawEnergy' at line 1506 [file `scripts/gui/hudcommon.lua']
+   5:  method `OnUpdateCommonHudElements' at line 2838 [file `scripts/gui/hudcommon.lua']
+   6:  function <21:file `scripts/multiplayer/hud.lua'> at line 65
+```
+
+You have basically two acceptable solutions:
+
+1. Either your program doesn't accept this log file as the game session has been somewhat corrupted;
+1. Either you program considers the game's end time as the time of the line that follows the last frag (in our previous example, this would be `<38:18> ERROR: $3#SCRIPT ERROR File: =C, Function: _ERRORMESSAGE,`).
 
 # Waypoint 9: Create Frag History CSV File
 
@@ -506,7 +585,7 @@ We want to calculate the following match statistics:
 
 The problem with our current sheet is that it combines both frag history and match statistics.
 
-When we want to import the frag history of  another match, we need to replace the current sheet with the data of the CSV file we are importing:
+When we want to import the frag history of another match, we need to replace the current sheet with the data of the CSV file we are importing:
 
 ![CSV File Import](farcry_google_sheets_import_csv_file.png)
 
@@ -542,7 +621,7 @@ You can now import another Far Cry frag history CSV file into the sheet `Frag Hi
 | --------------------------------------------------- | ------------------------------------------------------- |
 | ![](farcry_google_sheets_frag_history_sheet_02.png) | ![](farcry_google_sheets_match_statistics_sheet_02.png) |
 
-We can say that the sheet `Match Statistics` is a _view_ over the sheet `Frag History`. The data of the sheet `Match Statistics` is dynamically calculated from the sheet `Frag History`'s data. We will see this  with relational databases later in this mission.
+We can say that the sheet `Match Statistics` is a _view_ over the sheet `Frag History`. The data of the sheet `Match Statistics` is dynamically calculated from the sheet `Frag History`'s data. We will see this with relational databases later in this mission.
 
 # Waypoint 14: Calculate the Overall Statistics of a Match
 
@@ -1914,16 +1993,6 @@ where:
 - `weapon_code`: weapon used by this player to frag his victim.
 
 For example:
-
-from farcry import *
-log_data = read_log_file('./logs/log08.txt')
-frags = parse_frags(log_data)
-serial_killers = calculate_serial_killers(frags)
-for player_name, kill_series in serial_killers.items():
-     print('[%s]' % player_name)
-     print('\n'.join([', '.join(([str(e) for e in kill]))
-         for kill in kill_series]))
-
 
 ```python
 >>> log_data = read_log_file('./logs/log08.txt')
