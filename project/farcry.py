@@ -141,7 +141,7 @@ def parse_frags(log_data):
         line.pop(0) # del time
         line.pop(2) # del with/itself
 
-        if line[1] == '': # clear when player is killed by itself 
+        if line[1] == '': # clear when player is killed by itself
             line.pop()
             line.pop()
 
@@ -192,25 +192,82 @@ def parse_game_session_start_and_end_times(log_data):
     # return result
 
 
+def write_frag_csv_file(file_csv, frags):
+    """
+    Waypoint 9: Create Frag History CSV File
+    ---
+    @param {str} file_csv: name of new csv file
+    @param {list(tuple)} frags: infomation of each frag(time*, killer*, victim, weapon)
+    @return: create csv file
+    """
+    import csv
+
+    with open(file_csv, 'w') as csvFile:
+        writer = csv.writer(csvFile)
+        writer.writerows(frags)
+
+    csvFile.close()
+
+
 
 if __name__ == "__main__":
     import json
 
-    log_data = read_log_file("../logs/log05.txt")
+    log_data = read_log_file("../logs/log00.txt")
     # print(len(log_data))
     wp2_3 = parse_log_start_time(log_data)
     # print(wp2_3)
-    
+
     wp4 = parse_match_mode_and_map(log_data)
     # print(wp4, type(wp4))
-    
+
     wp5_6 = parse_frags(log_data)
     # print(wp5_6)
     # my_json_string = json.dumps(wp5_6,indent=2)
     # print(my_json_string)
-    
+
     wp7 = prettify_frags(wp5_6)
     print('\n'.join(wp7))
 
-   
-    
+    wp8 = parse_game_session_start_and_end_times(log_data)
+    # not yet
+
+    write_frag_csv_file('log04.csv', wp5_6) #wp9
+
+    # Waypoint 10: Import CSV File into Google Sheets
+    """
+    link file
+    https://docs.google.com/spreadsheets/d/1uULqLIZxmcfraa4Ulu-v2ysz1qH9Fv1BpsBrJ90V5II/edit#gid=749971819
+    """
+
+    # wp 11: Collect the List of Players
+    """
+    column 'F': =ARRAYFORMULA(SORT(UNIQUE(FILTER({B:B;C:C}; NOT(ISBLANK({B:B; C:C}))))))
+    """
+
+    # wp 12: Calculate Match Statistics
+    """
+    column 'G': =ARRAYFORMULA(COUNTIF(B:B;F1))
+    column 'H': =ARRAYFORMULA(COUNTIF(C:C;F1))
+    column 'I': =COUNTIFS(B:B; F1; C:C;"=")
+    column 'J': =ROUND(G1/(G1+H1+I1)*100; 2)
+    """
+
+    # wp 13: Split Frag History and Match Statistics into 2 Sheets
+    """
+    column 'A' =ARRAYFORMULA(SORT(UNIQUE(FILTER({'{SHEET_NAME}'!B:B;'{SHEET_NAME}'!C:C}; NOT(ISBLANK({'{SHEET_NAME}'!B:B; '{SHEET_NAME}'!C:C}))))))
+    column 'B' =ARRAYFORMULA(COUNTIF('{SHEET_NAME}'!B:B;A3))
+    column 'C' =ARRAYFORMULA(COUNTIF('{SHEET_NAME}'!C:C;A3))
+    column 'D' =COUNTIFS('{SHEET_NAME}'!B:B; A3; '{SHEET_NAME}'!C:C;"=")
+    column 'E' =B3/(B3+C3+D3)
+
+    """
+
+    # wp 14: Calculate the Overall Statistics of a Match
+    """
+    'Kills' =SUM(B$3:B)
+    'Deaths' =SUM(C$3:C)
+    'Suicides' =SUM(D$3:D)
+    """
+
+    #
