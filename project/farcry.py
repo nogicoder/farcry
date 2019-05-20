@@ -214,7 +214,7 @@ if __name__ == "__main__":
     import json
 
     log_data = read_log_file("../logs/log00.txt")
-    # print(len(log_data))
+    print(len(log_data))
     wp2_3 = parse_log_start_time(log_data)
     # print(wp2_3)
 
@@ -227,7 +227,7 @@ if __name__ == "__main__":
     # print(my_json_string)
 
     wp7 = prettify_frags(wp5_6)
-    print('\n'.join(wp7))
+    # print('\n'.join(wp7))
 
     wp8 = parse_game_session_start_and_end_times(log_data)
     # not yet

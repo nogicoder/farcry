@@ -318,7 +318,7 @@ The emoji 😛 represents the killer. The emoji 😦 represents the victim. The 
 | Emoji                                              | Weapon Names                                                                                                                                                                           | Weapon Codes                                                                                                              |
 | -------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
 | [🚙](https://emojipedia.org/recreational-vehicle/) | Buggy, Humvee                                                                                                                                                                          | `Vehicle`                                                                                                                 |
-| [🔫](https://emojipedia.org/pistol/)               | Jungle Falcon, Jackhammer Shotgun,P90 SMG, MP5 SMG,M4 Carbine, AG36 Assault Rifle, AG36 Assault Rifle,AW50 Sniper Rifle,M249 SAW MG, Mounted Minigun, Machine Gun mounted on a vehicle | `Falcon`, `Shotgun`, `P90`, `MP5`, `M4`,`AG36`, `OICW`, `SniperRifle`, `M249`, `VehicleMountedAutoMG`, `VehicleMountedMG` |
+| [🔫](https://emojipedia.org/pistol/)               | Jungle Falcon, Jackhammer Shotgun,P90 SMG, MP5 SMG,M4 Carbine, AG36 Assault Rifle, AG36 Assault Rifle,AW50 Sniper Rifle,M249 SAW MG, Mounted Minigun, Machine Gun mounted on a vehicle | `Falcon`, `Shotgun`, `P90`, `MP5`, `M4`,`AG36`, `OICW`, `SniperRifle`, `M249`, `MG`, `VehicleMountedAutoMG`, `VehicleMountedMG` |
 | [💣](https://emojipedia.org/bomb/)                 | Hand Grenade, OICW Advanced Assault Rifle, Mk.19 Mounted Mortar Launcher Platform                                                                                                      | `HandGrenade`, `AG36Grenade`, `OICWGrenade`, `StickyExplosive`                                                            |
 | [🚀](https://emojipedia.org/rocket/)               | Rocket Launcher, Rocket Launcher mounted on a vehicle,                                                                                                                                 | `Rocket`, `VehicleMountedRocketMG`, `VehicleRocket`                                                                       |
 | [🔪](https://emojipedia.org/hocho/)                | Machete                                                                                                                                                                                | `Machete`                                                                                                                 |
@@ -397,61 +397,6 @@ For example:
 
 # Waypoint 8: Determine Game Session's Start and End Times
 
-When a user runs Far Cry, the Far Cry application starts to store traces information in the text file name `log.txt`. This does not correspond to a game session yet.
-
-A game session starts when the user selects the game mode and the map to play on, and when the user launches the game session. **The game session starts when the map is fully loaded**.
-
-| Launch Game Session                 | Load Map                                 |
-| ----------------------------------- | ---------------------------------------- |
-| ![](farcry_game_session_launch.png) | ![](farcry_game_session_map_loading.png) |
-
-_Hint: in the Far Cry log's file, you will information that indicates the time it took to load the map. That's a fairly good indication that the map has been loaded... :)_
-
-On another hand, a game session does not end when at the last frag. A game session ends just before Far Cry calculates the statistics.
-
-For example:
-
-```text
-<13:29> ================================================================================
-<13:29> == Statistics ==
-<13:29> ================================================================================
-<13:29> Servername: intek's Server
-<13:29> Levelname: mp_surf
-<13:29> ================================================================================
-<13:29> == Player: ==
-<13:29> ================================================================================
-<13:29> Player: lythanhphu
-<13:29> nKill=143
-<13:29> nHeadshot=11
-<13:29> nBulletShot=0
-<13:29> nSelfKill=3
-<13:29> nBulletHit=0
-<13:29> Player: Transporter
-<13:29> nKill=25
-<13:29> nHeadshot=5
-<13:29> nBulletShot=0
-<13:29> nSelfKill=0
-<13:29> nBulletHit=0
-<13:29> Player: moomoo
-<13:29> nKill=10
-<13:29> nHeadshot=2
-<13:29> nBulletShot=0
-<13:29> nSelfKill=2
-<13:29> nBulletHit=0
-<13:29> Player: jason
-<13:29> nKill=8
-<13:29> nHeadshot=1
-<13:29> nBulletShot=0
-<13:29> nSelfKill=0
-<13:29> nBulletHit=0
-<13:29> Player: shogun
-<13:29> nKill=21
-<13:29> nHeadshot=3
-<13:29> nBulletShot=0
-<13:29> nSelfKill=1
-<13:29> nBulletHit=0
-```
-
 Write a function `parse_game_session_start_and_end_times` that takes an argument `log_data` representing the data read from a Far Cry server's log file (and possibly some other arguments [you need to choose wisely](https://www.youtube.com/watch?v=oF2UrYSDb3k)), and returns the approximate start and end time of the game session.
 
 For example:
@@ -467,30 +412,6 @@ For example:
  >>> str(start_time), str(end_time)
 ('2019-03-12 12:37:24-05:00', '2019-03-12 12:57:24-05:00')
 ```
-
-Note: it could happen that Far Cry engine crashed before the end of a game session. Far Cry engine then doesn't provide any game statistics.
-
-```text
-(...)
-<37:38> <Lua> cynthia killed Jack The Ripper with OICW
-<37:55> <Lua> Jack The Ripper killed itself
-<38:01> <Lua> cyap killed cynthia with OICW
-<38:12> <Lua> cyap killed cynthia with OICWGrenade
-<38:18> ERROR: $3#SCRIPT ERROR File: =C, Function: _ERRORMESSAGE,
-error: stack overflow
-stack traceback:
-   1:  `index' tag method [C]
-   2:  method `DrawElement' at line 1042 [file `scripts/gui/hudcommon.lua']
-   3:  method `DrawGauge' at line 1970 [file `scripts/gui/hudcommon.lua']
-   4:  method `DrawEnergy' at line 1506 [file `scripts/gui/hudcommon.lua']
-   5:  method `OnUpdateCommonHudElements' at line 2838 [file `scripts/gui/hudcommon.lua']
-   6:  function <21:file `scripts/multiplayer/hud.lua'> at line 65
-```
-
-You have basically two acceptable solutions:
-
-1. Either your program doesn't accept this log file as the game session has been somewhat corrupted;
-1. Either you program considers the game's end time as the time of the line that follows the last frag (in our previous example, this would be `<38:18> ERROR: $3#SCRIPT ERROR File: =C, Function: _ERRORMESSAGE,`).
 
 # Waypoint 9: Create Frag History CSV File
 
@@ -684,7 +605,7 @@ Create a new logical diagram, also known as an [Entity-Relationship Diagram](htt
 
 _Note 1: We prefer to use our own abstract data type `datetime`, `string`, `integer`, and `decimal`, rather than the data types the application Navicat suggests, which seem more specific to a particular RDBMS._
 
-_Note 2: The attributes `frag_time` and `killer_name` of the table `match_frag` always contain a value, i.e., they CANNOT be null, while the attributes `victim_name` and `weapon_code` can be empty, they CAN be null (i.e., when the player committed suicide). What about the table `match_statistics`?_
+_Note 2: The attributes `frag_time` and `killer_name` of the table `match_frag` always contain a value. For example: they CANNOT be null, while the attributes `victim_name` and `weapon_code` can be empty, they CAN be null (e.g., when the player committed suicide). What about the table `match_statistics`?_
 
 # Waypoint 16: Add Match Entity
 
@@ -897,7 +818,7 @@ sqlite> .header on
 
 # Waypoint 27: Select Start and End Times of Matches
 
-Write a SQL query, using the simplest form of the statement [SELECT](https://www.sqlite.org/lang_select.html), that returns the column `match_id`, `start_time`, and `end_time` of every match.
+Write a SQL query, using the simplest form of the statement [SELECT](https://www.sqlite.org/lang_select.html), that returns the columns `match_id`, `start_time`, and `end_time` of every match.
 
 For example:
 
@@ -933,7 +854,7 @@ match_id    game_mode   map_name
 
 # Waypoint 29: Select all Columns of Matches
 
-Write a SQL query that returns all the columns of every match without specifying each individual column, but the asterisk `*` operator.
+Write a SQL query that returns all the columns of every match without specifying each individual column, using the asterisk `*` operator.
 
 For example:
 
@@ -980,7 +901,7 @@ Vasily Zayt
 
 # Waypoint 31: Order the List of Killer Names
 
-Write the same SQL query than the previous waypoint, but [order](https://en.wikipedia.org/wiki/Order_by) killer names by alphabetical order.
+Write the same SQL query as the previous waypoint, but [order](https://en.wikipedia.org/wiki/Order_by) killer names in alphabetical order.
 
 For example:
 
@@ -1031,7 +952,7 @@ kill_suicide_count
 
 # Waypoint 34: Calculate the Number of Suicides
 
-Write a SQL query that returns the total number of suicides. [Only count](<https://en.wikipedia.org/wiki/Where_(SQL)>) frags that has no victim, meaning that `victim_name` is `NULL`. Alias the returned value with the name `suicide_count`.
+Write a SQL query that returns the total number of suicides. [Only count](<https://en.wikipedia.org/wiki/Where_(SQL)>) frags that have no victim, meaning that `victim_name` is `NULL`. Alias the returned value with the name `suicide_count`.
 
 For example:
 
@@ -1043,7 +964,9 @@ suicide_count
 
 # Waypoint 35: Calculate the Number of Kills (1)
 
-Write a SQL query that returns the total number of kills. Only count frags that has a victim, i.e., where `victim_name` is not `NULL`. Alias the returned value with the name `kill_count`.
+Write a SQL query that returns the total number of kills. Only count frags that have a victim, e.g., where `victim_name` is not `NULL`. Alias the returned value with the name `kill_count`.
+
+For example:
 
 ```sql
 kill_count
@@ -1053,7 +976,7 @@ kill_count
 
 # Waypoint 36: Calculate the Number of Kills (2)
 
-Transform the SQL query of the previous waypoint to return the exact same result, but without using the filter clause, but just [the aggregate function `COUNT`](https://www.sqlite.org/lang_aggfunc.html).
+Modify the SQL query of the previous waypoint to return the exact same result ... without using the filter clause! Only [the aggregate function `COUNT`](https://www.sqlite.org/lang_aggfunc.html).
 
 For example:
 
@@ -1083,7 +1006,7 @@ match_id    kill_suicide_count
 
 # Waypoint 38: Calculate and Order the Number of Kills and Suicides per Match
 
-Update the SQL query of the previous waypoint to sort the result by descending order of the number of kills.
+Update the SQL query from the previous waypoint to sort the result by descending order of the number of kills.
 
 For example:
 
@@ -1101,7 +1024,7 @@ match_id    kill_suicide_count
 
 # Waypoint 39: Calculate and Order the Number of Suicides per Match
 
-Write a SQL query that returns the number of suicides per match. Sort the result by their ascending order of number of suicides.
+Write a SQL query that returns the number of suicides per match. Sort the result in ascending order by the number of suicides.
 
 For example:
 
@@ -1119,7 +1042,7 @@ match_id    suicide_count
 
 # Waypoint 40: Calculate and Order the Total Number of Kills per Player
 
-Write a SQL query that returns the total number of kills per player among all the game sessions they have participated to. Sort the result by the descending order of the number of kills. If two players have the same total number of kills, they must be sorted by their ascending alphabetical order.
+Write a SQL query that returns the total number of kills per player among all the game sessions they have participated in. Sort the result in descending order by the number of kills. If two players have the same total number of kills, they must be sorted by their ascending alphabetical order.
 
 For example:
 
@@ -1252,9 +1175,9 @@ match_id    player_name  death_count
 
 # Waypoint 43: Select Matches and Calculate the Number of Players and the Number of Kills and Suicides
 
-Write a SQL query that selects all the matches and calculates the number of players who participated to each of these matches and the number of kills and suicides that occurred during each of these matches. You will need to [join](http://www.sqlitetutorial.net/sqlite-inner-join/) the tables `match` and `match_frag`.
+Write a SQL query that selects all the matches and calculates the number of players who participated in each of those matches and the number of kills and suicides that occurred during each of those matches. You will need to [join](http://www.sqlitetutorial.net/sqlite-inner-join/) the tables `match` and `match_frag`.
 
-Sort the result by the ascending order of the start date and time of these matches.
+Sort the result in ascending order by start date and time of these matches.
 
 ```sql
 match_id    start_time                 end_time                   player_count  kill_suicide_count
@@ -1270,7 +1193,7 @@ match_id    start_time                 end_time                   player_count  
 
 # Waypoint 44: Calculate Players Efficiency per Match
 
-We would like to write a SQL query that calculates player efficency per match. The result needs to look like the following:
+Write a SQL query that calculates player efficency per match. The result needs to look like the following:
 
 ```sql
 match_id    player_name  kill_count  death_count  suicide_count  efficiency
@@ -1294,13 +1217,13 @@ match_id    player_name  kill_count  death_count  suicide_count  efficiency
 14          moomoo       10          46           2              17.24
 ```
 
-Reminder: the efficiency of player is determined with the formula `kills / (kills + deaths + suicides)`.
+Reminder: The efficiency of the player is determined by using the following formula `kills / (kills + deaths + suicides)`.
 
 [SQLite doesn't support a few SQL standard features](https://www.sqlite.org/omitted.html) that could have been used for this waypoint.
 
 ## Calculate the Number of Kills and the Number of Suicides per Player and Per Match
 
-Write a SQL query (`SQL-01`) that calculates the number of times a player P1 has killed another player or commited suicide. The SQL returns these data per player and per match. Add into the result the value `death_count` with the value `0` for each row. The result is returned with no particular order.
+Write a SQL query (`SQL-01`) that calculates the number of times a player P1 has killed another player or commited suicide. SQL returns the data per player and per match. Add to the result the following value `death_count` which contains the value `0` for each row. The result is returned in no particular order.
 
 For example:
 
@@ -1328,7 +1251,7 @@ match_id    player_name      kill_count  suicide_count  death_count
 
 ## Calculate the Number of Deaths per Player and Per Match
 
-Write a SQL query (`SQL-02`) that calculates the number of times a player has been killed by another. The SQL returns this datum per player and per match. Add into the result the value `kill_count` and `suicide_count` with the value `0` for each row.
+Write a SQL query (`SQL-02`) that calculates the number of times a player has been killed by another and returns the data per player and per match. Add to the result the following values `kill_count` and `suicide_count` with the value `0` for each row.
 
 For example:
 
@@ -1356,7 +1279,7 @@ match_id    player_name      kill_count  suicide_count  death_count
 
 ## Connect the SQL queries `SQL-01` and `SQL-02` together
 
-Write a SQL query (`SQL-03`) that connects the SQL queries `SQL-01` and `SQL-02` together to form [a compound `SELECT` using the `UNION`](http://www.sqlitetutorial.net/sqlite-union/).
+Write a SQL query (`SQL-03`) that connects the SQL queries `SQL-01` and `SQL-02` together to form [a compound `SELECT` using `UNION`](http://www.sqlitetutorial.net/sqlite-union/).
 
 For example:
 
@@ -1401,9 +1324,9 @@ match_id    player_name      kill_count  suicide_count  death_count
 
 ## Calculate the Number of Kills, Deaths, and Suicides per Player and per Match
 
-Write a SQL query (`SQL-04`) that aggregates the result [from the SQL subquery](https://www.essentialsql.com/get-ready-to-learn-sql-server-22-using-subqueries-in-the-from-clause/) `SQL-03` (also known as the _derived table_) to return the number of kills, deaths, and suicides per player and per match.
+Write a SQL query (`SQL-04`) that aggregates the result [from the SQL subquery](https://www.essentialsql.com/get-ready-to-learn-sql-server-22-using-subqueries-in-the-from-clause/) `SQL-03` (AKA the _derived table_) to return the number of kills, deaths, and suicides per player and per match.
 
-_Note: a derived table is a subquery that can take the place of a table in the `FROM` clause of an SQL statement._
+_Note: A derived table is a subquery that can take the place of a table in the `FROM` clause of a SQL statement._
 
 For example:
 
@@ -1461,11 +1384,13 @@ match_id    player_name  kill_count  death_count  suicide_count  efficiency
 
 We have previously designed the logical data model of our Far Cry system information with the entity `match_statistics`. We have created the corresponding table `match_statistics`.
 
-However, this data model requires to calculate and insert statistics into the table `match_statistics` each time data of a match have been imported into both tables `match` and `match_frag`.
+However, this data model requires us to calculate and insert statistics into the table `match_statistics` each time the data of a match has been imported into both tables `match` and `match_frags`.
 
-[Delete the table](https://sqlite.org/lang_droptable.html) `match_statistics` and [create a view](https://www.sqlite.org/lang_createview.html) with the same name `match_statistics` that return the result of the previous waypoint.
+[Delete the table](https://sqlite.org/lang_droptable.html) `match_statistics` and [create a view](https://www.sqlite.org/lang_createview.html) with the same name `match_statistics` that returns the result of the previous waypoint.
 
-You can query this view like a table. For example:
+You can query this view like a table.
+
+For example:
 
 ```sql
 sqlite> SELECT * FROM match_statistics WHERE match_id = 13 ORDER BY efficiency ASC;
@@ -1482,7 +1407,7 @@ match_id    player_name  kill_count  death_count  suicide_count  efficiency
 13          lythanhphu   101         53           0              65.58
 ```
 
-**WARNING**: there is a performance issue. A view is a just a pre-packaged `SELECT` statement. It means all this statement will be executed before applying any filter that would have added to your request that uses the view:
+**WARNING**: There is a performance issue. A view is just a pre-packaged `SELECT` statement. Which means that all of this statement will be executed before applying any filter that would have added to your request that uses the view:
 
 ```sql
 SELECT *
@@ -1491,11 +1416,11 @@ SELECT *
   ORDER BY efficiency ASC;
 ```
 
-If your tables `match` and `match_frag` have hundreds of thousands of records, even if you were only interested in player efficiency for the particular match `13`, this previous query will calculate player efficency for **every** match, before returning player efficiency for match `13`. This would be huge waste of CPU and memory consumption!
+If your tables `match` and `match_frags` have hundreds of thousands of records, even if you were only interested in player efficiency for the particular match `13`, the previous query would calculate player efficency for **every** match, before returning player efficiency for match `13`. This would be a huge waste of CPU and memory consumption!
 
-You might want to persist these results instead of calculating them again and again. For that we need to use a [materialized view](https://en.wikipedia.org/wiki/Materialized_view).
+You might want to persist these results instead of calculating them again and again. For that we would need to use a [materialized view](https://en.wikipedia.org/wiki/Materialized_view).
 
-SQLite doesn't support materialized views. Let's move to [PostgreSQL](https://www.postgresql.org/), the ultimate relational database management system that allows you to create complex applications which work flawlessly even for very large number of users.
+SQLite doesn't support materialized views. Let's move to [PostgreSQL](https://www.postgresql.org/), the ultimate relational database management system that allows you to create complex applications which work flawlessly even for a large number of users.
 
 ---
 
@@ -1533,7 +1458,7 @@ farcry=#
 
 # Waypoint 47: Create Tables Match and Match Frags
 
-We are going now to create the tables `match` and `match_frag`.
+We are going now to create the tables `match` and `match_frags`.
 
 This time, we will manage the identification of a match a bit differently. We have used an auto-incremented integers to identify a match with SQLite. There may be other teams in the world are playing Far Cry and calculating statistics about their game sessions. If we wanted to share statistics of all these Far Cry game sessions, we would face an issue with duplicated match identifications as these identifications will be generated on different RDBMS that all start generating identifications with `0`. We need to generate unique match identifications. This is what [Universally Unique IDentifier (UUID](https://en.wikipedia.org/wiki/Universally_unique_identifier) a is for.
 
@@ -1567,7 +1492,7 @@ We are now going to create the tables `match` and `match_frag` with [Data Defini
 | `game_mode`  | [`text`](https://www.postgresql.org/docs/current/datatype-character.html)          | No        |                      |
 | `map_name`   | [`text`](https://www.postgresql.org/docs/current/datatype-character.html)          | No        |                      |
 
-Create the table `match_frag` with the following columns:
+Create the table `match_frags` with the following columns:
 
 | Name          | Data Type        | Nullable? | Default Value |
 | ------------- | ---------------- | --------- | ------------- |
@@ -1621,7 +1546,7 @@ Write a function `insert_match_to_postgresql` that takes the following arguments
 
 The function `insert_match_to_postgresql` inserts a new record into the table `match` with the arguments `start_time`, `end_time`, `game_mode`, and `map_name`, using a [`INSERT` statement](https://www.postgresql.org/docs/current/sql-insert.html). You need to use the Python module [`psycopg2`](http://initd.org/psycopg/docs/).
 
-The function `insert_match_to_postgresql` inserts all the frags into the table `match_frag`.
+The function `insert_match_to_postgresql` inserts all the frags into the table `match_statistics`.
 
 The function `insert_match_to_postgresql` returns the identification of the match that has been inserted.
 
@@ -1855,7 +1780,7 @@ The class of a player is determined by the weapon he used the most to kill other
 |                                                 | Class      | Weapons                                                                                                                                                                                 |
 | ----------------------------------------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | ![Hitman](farcry_class_hitman.png)              | Hitman     | `Machete`, `Falcon`, `MP5`                                                                                                                                                              |
-| ![Sniper](farcry_class_sniper.png)              | Sniper     | `SniperRifle`                                                                                                                                                                           |
+| ![Sniper](farcry_class_sniper.png)              | Sniper     | `SniperRifle`                                                                                                                                                                          |
 | ![Commando](farcry_class_commando.jpg)          | Commando   | `AG36`, `OICW`, `P90`, `M4`, `Shotgun`, `M249`                                                                                                                                          |
 | ![Psychotic Killer](farcry_class_psychotic.jpg) | Psychopath | `Rocket`, `VehicleRocket`, `HandGrenade`, `StickExplosive`, `Boat`, `Vehicle`, `VehicleMountedRocketMG`, `VehicleMountedAutoMG`, `MG`, `VehicleMountedMG`, `OICWGrenade`, `AG36Grenade` |
 
@@ -2003,29 +1928,61 @@ For example:
 ...     print('\n'.join([', '.join(([str(e) for e in kill]))
 ...         for kill in kill_series]))
 [Transporter]
-2019-04-12 05:44:20+00:00, lythanhphu, AG36
-2019-04-12 05:45:58+00:00, lythanhphu, AG36
+2019-04-12 05:54:35+00:00, lythanhphu, M4
+2019-04-12 05:54:59+00:00, lythanhphu, Falcon
+2019-04-12 05:55:04+00:00, lythanhphu, Falcon
+2019-04-12 05:59:04+00:00, lythanhphu, AG36
+2019-04-12 06:04:06+00:00, lythanhphu, Falcon
+2019-04-12 06:04:44+00:00, lythanhphu, Falcon
+2019-04-12 06:08:17+00:00, lythanhphu, Falcon
+2019-04-12 06:08:47+00:00, lythanhphu, AG36
 [moomoo]
-2019-04-12 05:31:24+00:00, shogun, M4
-2019-04-12 05:31:43+00:00, lythanhphu, M4
+2019-04-12 05:33:04+00:00, lythanhphu, P90
+2019-04-12 05:35:02+00:00, lythanhphu, P90
+2019-04-12 05:35:54+00:00, lythanhphu, M4
+2019-04-12 05:44:00+00:00, lythanhphu, SniperRifle
 [jason]
 2019-04-12 05:54:51+00:00, moomoo, SniperRifle
 2019-04-12 05:55:25+00:00, lythanhphu, SniperRifle
+2019-04-12 05:59:43+00:00, lythanhphu, M249
 [lythanhphu]
-2019-04-12 05:13:44+00:00, Transporter, AG36
-2019-04-12 05:13:52+00:00, Transporter, AG36
-2019-04-12 05:14:01+00:00, Transporter, AG36
-2019-04-12 05:14:25+00:00, moomoo, AG36
-2019-04-12 05:15:24+00:00, Transporter, AG36
-2019-04-12 05:15:49+00:00, moomoo, VehicleRocket
-2019-04-12 05:16:06+00:00, moomoo, AG36Grenade
-2019-04-12 05:16:21+00:00, Transporter, AG36
-2019-04-12 05:16:51+00:00, moomoo, VehicleRocket
-2019-04-12 05:16:56+00:00, jason, VehicleRocket
+2019-04-12 05:59:25+00:00, shogun, AG36
+2019-04-12 05:59:42+00:00, moomoo, OICWGrenade
+2019-04-12 06:00:20+00:00, Transporter, Rocket
+2019-04-12 06:00:52+00:00, jason, P90
+2019-04-12 06:01:16+00:00, Transporter, VehicleRocket
+2019-04-12 06:01:16+00:00, shogun, VehicleRocket
+2019-04-12 06:01:49+00:00, Transporter, VehicleRocket
+2019-04-12 06:02:06+00:00, shogun, Falcon
+2019-04-12 06:02:12+00:00, jason, Falcon
+2019-04-12 06:03:46+00:00, Transporter, OICW
+2019-04-12 06:04:26+00:00, Transporter, Falcon
+2019-04-12 06:04:58+00:00, shogun, M4
+2019-04-12 06:05:50+00:00, shogun, M249
+2019-04-12 06:06:23+00:00, moomoo, OICW
+2019-04-12 06:06:28+00:00, jason, OICW
+2019-04-12 06:06:57+00:00, moomoo, M4
+2019-04-12 06:07:04+00:00, jason, HandGrenade
+2019-04-12 06:07:10+00:00, moomoo, Shotgun
+2019-04-12 06:07:59+00:00, Transporter, AG36
+2019-04-12 06:08:10+00:00, Transporter, AG36
+2019-04-12 06:08:28+00:00, moomoo, VehicleRocket
+2019-04-12 06:09:28+00:00, shogun, Rocket
+2019-04-12 06:09:43+00:00, Transporter, Rocket
+2019-04-12 06:09:48+00:00, moomoo, Rocket
+2019-04-12 06:10:13+00:00, shogun, Boat
+2019-04-12 06:10:48+00:00, moomoo, M4
+2019-04-12 06:10:59+00:00, jason, VehicleRocket
+2019-04-12 06:11:16+00:00, Transporter, VehicleRocket
+2019-04-12 06:11:28+00:00, Transporter, VehicleRocket
+2019-04-12 06:11:31+00:00, moomoo, VehicleRocket
 [shogun]
-2019-04-12 05:37:36+00:00, lythanhphu, MG
-2019-04-12 05:38:28+00:00, jason, MG
-2019-04-12 05:42:12+00:00, lythanhphu, MP5
+2019-04-12 05:48:23+00:00, Transporter, VehicleRocket
+2019-04-12 05:51:23+00:00, lythanhphu, M4
+2019-04-12 05:53:34+00:00, lythanhphu, M4
+2019-04-12 05:59:33+00:00, lythanhphu, Falcon
+2019-04-12 06:00:28+00:00, lythanhphu, M4
+2019-04-12 06:03:08+00:00, lythanhphu, AG36
 ```
 
 # Waypoint 54: Determine Serial Losers
@@ -2034,7 +1991,7 @@ A serial looser is a player who has been killed (or committed suicides) several 
 
 ![Serial Loser](farcry_statistics_serial_loser.png)
 
-Write a Python function `calculate_serial_losers` that takes an argument `frags` and returns a dictionary of players (victims) with their longest death series, where the key corresponds to the name of a player and the value corresponds to a list of frag times of the player's longest series:
+Write a Python function `calculate_serial_losers` that takes an argument `frags` and returns a dictionary of killers with their longest kill series, where the key corresponds to the name of a player and the value corresponds to a list of frag times of the player's longest series:
 
 ```python
 {
