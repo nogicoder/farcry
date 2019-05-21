@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-# Emoji Icons
+# Emoji Icons - wp7
 CHARACTER_BOAT = '🚤'
 CHARACTER_AUTOMOBILE = '🚙'
 CHARACTER_VICTIM = '😦'
@@ -11,6 +11,7 @@ CHARACTER_GRENADE = '💣'
 CHARACTER_ROCKET = '🚀'
 CHARACTER_MACHETE = '🔪'
 
+# wp7
 weapon_icon = {
     'Vehicle': CHARACTER_AUTOMOBILE,
     'Falcon': CHARACTER_GUN,
@@ -74,12 +75,13 @@ def parse_log_start_time(log_data):
     from datetime import timedelta
     from datetime import timezone
 
-    # get time zone
+
+    # get time zone - wp3 
     index_timezone = log_data.find('g_timezone') + 11
     value_timezone = log_data[index_timezone: index_timezone+5].split('\n')[0][:-1]
     g_timezone = timezone(timedelta(hours=int(value_timezone)))
 
-    # get local start time
+    # get local start time - wp2
     first_line = log_data.split('\n')[0][15:]
     format_form = "%A, %B %d, %Y %H:%M:%S" # Friday, November 09, 2018 12:22:07
     start_time_local = datetime.strptime(first_line, format_form)
@@ -93,8 +95,10 @@ def parse_log_start_time(log_data):
 def parse_match_mode_and_map(log_data):
     """
     Waypoint 4: Parse Match Session's Mode and Map
+    ---
+    Scaning all line and return the FIRST LINE matches the pattern
 
-    Find more (mode, map) in 3,4,5,7,8,9, 10
+    NOTE: Find more (mode, map) in 4, 5, 7, 8, 9, 10, 11
     ---
     @param {str} log_data: content of log file
     @return {tuple} (mode, map).
@@ -102,9 +106,11 @@ def parse_match_mode_and_map(log_data):
     """
     from re import findall
 
-    mode_and_map = findall(".* Loading level Levels\/(.*), mission (.*) -.*", log_data)
+    # format: ... Loading level Levels/(map), mission (mode) ...
+    pattern = ".* Loading level Levels\/(.*), mission (.*) -.*"
+    mode_and_map = findall(pattern, log_data)
 
-    return mode_and_map
+    return (mode_and_map[0][1], mode_and_map[0][0])
 
 
 def parse_frags(log_data):
@@ -112,43 +118,48 @@ def parse_frags(log_data):
     Waypoint 5: Parse Frag History
     Waypoint 6: Include Time Zone To Frag Timestamps
     ---
+    Find all lines that match with the format:
+        + <{MM:SS}> <Lua> {killer_username} killed {victim_username} with {weapon_code}
+        + <{MM:SS}> <Lua> {killer_username} killed itself
+    ---
     @param {str} log_data: content of log file
-    @return {list(tuple)} frags: infomation of each frag(time*, killer*, victim, weapon)
-    *: require
-    non-*: optional
+    @return {list(tuple)} frags: infomation of each frag (time{object}*, killer{str}*, victim{str}, weapon{str})
     """
 
     from re import findall
     from datetime import datetime
     from datetime import timedelta
 
-    # (frag_time, killer_name)
-    # (frag_time, killer_name, victim_name, weapon_code)
-    # <(frag_time*)> <Lua> (killer_name*) killed (victim_name) itself/with ( weapon_code)
+    # <{frag_time}*)> <Lua> {killer_name}* killed {victim_name} {itself/with} { weapon_code}
+    pattern = "<(\d{2}:\d{2})> <Lua> (.*) killed (.*)(itself| with)(.*)"
+    rough_frags = findall(pattern, log_data)
 
-    patterm = "<(\d{2}:\d{2})> <.*> (.*) killed (.*)(itself| with)(.*)"
-    rough_frags = findall(patterm, log_data)
-
+    # get the engine's Start Time - wp3
     start_time = parse_log_start_time(log_data)
     start_hour = start_time.hour
+
     frags = []
 
     for frag in rough_frags:
+        # increase the hours by 1 manually.
         frag_time = start_time.replace(minute=int(frag[0][:2]), second=int(frag[0][3:]))
         if frag_time < start_time:
-            frag_time = start_time.replace(hour=start_hour+1, minute=int(frag[0][:2]), second=int(frag[0][3:]))
-        line = list(frag)
-        line.pop(0) # del time
-        line.pop(2) # del with/itself
+            frag_time = frag_time.replace(hour=start_hour+1)
+        
+        line = list(frag) # convert tuple to list 
 
-        if line[1] == '': # clear when player is killed by itself
-            line.pop()
-            line.pop()
+        line.pop(3) # delete itself/with
 
-        if len(frag[-1]) > 0: # del space
+        if len(frag[-1]) != 0: #  delete a space in 'with' case
             line[-1] = frag[-1][1:]
-        line = [frag_time] + line # combine frag
+        else: # delete empty str in 'itself' case
+            line.pop()
+            line.pop()
+
+        line = [frag_time] + line[1:] # combine frag
+        # print(line)
         frags.append(tuple(line)) # add to big frags
+
     rough_frags.clear()
     return frags
 
@@ -156,8 +167,14 @@ def parse_frags(log_data):
 def prettify_frags(frags):
     """
     Waypoint 7: Prettify Frag History
-    KeyError 'MG' 1, 3, 4, 5, 7, 8, 9
-    adding 'MG' in emoji table
+    ---
+    Adding icon with the format:
+        + [frag_time] 😛 killer_name weapon_icon 😦 victim_name
+        + [frag_time] 😦 victim_name ☠
+    ---
+    @param {list(tuple)} frags: information of each frag
+    @return {list(tuple)} prettified_frags: frag with emotion 
+
     """
     prettified_frags = []
     for frag in frags:
@@ -170,33 +187,55 @@ def prettify_frags(frags):
     return prettified_frags
 
 
-def parse_game_session_start_and_end_times(log_data):
+def parse_game_session_start_and_end_times(log_data, frags):
     """
     Waypoint 8: Determine Game Session's Start and End Times
     ---
-    :param {str} log_data: content of log file
-    :return {tuple(start, end)}:
+    START: <start_time> Precaching level --- <{start_time} done
+    END: 
+        + <end_time> *. Statistics .* => run
+        + <end_time> last frag => crash
+
+    NOTE:
     non statistics log01.tsxt
     more then one statistics log05.txt
+    ---
+    @param {str} log_data: content of log file
+    @return {tuple(start(object), end(object))}: start time and end time
     """
-    # from re import findall
-    # start = findall(r"<.*> Precaching level ... <(.*)> done", log_data)[0].split(':')
-    # end = findall(r"<(.*)> == Statistics.*==", log_data)[0]
-    # if end:
-    #     end = end.split(':')
-    # else:
-    #     end = findall(r"<(.*)> ERROR: .3#SCRIPT ERROR File: =C, Function: _ERRORMESSAGE,", log_data)[0].split(':')
-    # start_session = dictionary_data['start_time'].replace(minute=int(start[0]), second=int(start[1]))
-    # end_session = dictionary_data['start_time'].replace(minute=int(end[0]), second=int(end[1]))
-    # result = (start_session, end_session)
-    # return result
+
+    from re import findall
+
+    pattern_start = "<.*> Precaching level ... <(.*)> done"
+    start_time = findall(pattern_start, log_data)[0].split(':')
+
+    start_log = parse_log_start_time(log_data)
+    start_session = start_log.replace(minute=int(start_time[0]), second=int(start_time[1]))
+
+    pattern_end_run = "<(.*)>.*Statistics.*"
+    end_time = findall(pattern_end_run, log_data)
+    
+    if end_time == []:
+        # pattern_end_crash = "<(.*)> ERROR: $3#SCRIPT ERROR File: =C, Function: _ERRORMESSAGE.*"
+        # end_time = findall(pattern_end_crash, log_data)
+        end_time = frags[-1][0] # get the last frag
+        end_session = end_time
+    else:
+        end_time = end_time[0].split(':')
+        end_session = start_log.replace(minute=int(end_time[0]), second=int(end_time[1]))
+      
+    if start_session > end_session:
+        old_hour = end_session.hour
+        end_session.replace(hour=old_hour+1)
+
+    return (start_session, end_session)
 
 
 def write_frag_csv_file(file_csv, frags):
     """
     Waypoint 9: Create Frag History CSV File
     ---
-    @param {str} file_csv: name of new csv file
+    @param {str} file_csv: path of new csv file
     @param {list(tuple)} frags: infomation of each frag(time*, killer*, victim, weapon)
     @return: create csv file
     """
@@ -213,61 +252,42 @@ def write_frag_csv_file(file_csv, frags):
 if __name__ == "__main__":
     import json
 
-    log_data = read_log_file("../logs/log00.txt")
-    print(len(log_data))
+    log_file_pathname = "../logs/log00.txt"
+    csv_file_path = "csv/log00.csv"
+
+    # wp1 
+    log_data = read_log_file(log_file_pathname)
+    # print(len(log_data))
+    
     wp2_3 = parse_log_start_time(log_data)
-    # print(wp2_3)
+    # print(wp2_3, type(wp2_3)) # type datetime.datetime
 
     wp4 = parse_match_mode_and_map(log_data)
     # print(wp4, type(wp4))
 
     wp5_6 = parse_frags(log_data)
     # print(wp5_6)
-    # my_json_string = json.dumps(wp5_6,indent=2)
-    # print(my_json_string)
 
     wp7 = prettify_frags(wp5_6)
     # print('\n'.join(wp7))
 
-    wp8 = parse_game_session_start_and_end_times(log_data)
-    # not yet
+    wp8 = parse_game_session_start_and_end_times(log_data, wp5_6)
+    # print(wp8)
 
-    write_frag_csv_file('log04.csv', wp5_6) #wp9
+    # wp9
+    write_frag_csv_file(csv_file_path, wp5_6) 
 
-    # Waypoint 10: Import CSV File into Google Sheets
+    # wp10 - wp14: Playing with excel. Following the link below!
     """
-    link file
-    https://docs.google.com/spreadsheets/d/1uULqLIZxmcfraa4Ulu-v2ysz1qH9Fv1BpsBrJ90V5II/edit#gid=749971819
-    """
-
-    # wp 11: Collect the List of Players
-    """
-    column 'F': =ARRAYFORMULA(SORT(UNIQUE(FILTER({B:B;C:C}; NOT(ISBLANK({B:B; C:C}))))))
+    https://docs.google.com/spreadsheets/d/1uULqLIZxmcfraa4Ulu-v2ysz1qH9Fv1BpsBrJ90V5II/edit#gid=72772049
     """
 
-    # wp 12: Calculate Match Statistics
+    # wp15 - wp20: Build Naive Data Model with Navicat Data Modeler
     """
-    column 'G': =ARRAYFORMULA(COUNTIF(B:B;F1))
-    column 'H': =ARRAYFORMULA(COUNTIF(C:C;F1))
-    column 'I': =COUNTIFS(B:B; F1; C:C;"=")
-    column 'J': =ROUND(G1/(G1+H1+I1)*100; 2)
+    model_logical.ndml
     """
 
-    # wp 13: Split Frag History and Match Statistics into 2 Sheets
+    # wp21- wp24: Create SQLite Database and identify the relationship
     """
-    column 'A' =ARRAYFORMULA(SORT(UNIQUE(FILTER({'{SHEET_NAME}'!B:B;'{SHEET_NAME}'!C:C}; NOT(ISBLANK({'{SHEET_NAME}'!B:B; '{SHEET_NAME}'!C:C}))))))
-    column 'B' =ARRAYFORMULA(COUNTIF('{SHEET_NAME}'!B:B;A3))
-    column 'C' =ARRAYFORMULA(COUNTIF('{SHEET_NAME}'!C:C;A3))
-    column 'D' =COUNTIFS('{SHEET_NAME}'!B:B; A3; '{SHEET_NAME}'!C:C;"=")
-    column 'E' =B3/(B3+C3+D3)
-
-    """
-
-    # wp 14: Calculate the Overall Statistics of a Match
-    """
-    'Kills' =SUM(B$3:B)
-    'Deaths' =SUM(C$3:C)
-    'Suicides' =SUM(D$3:D)
-    """
-
-    #
+    farcry.db
+    ""
