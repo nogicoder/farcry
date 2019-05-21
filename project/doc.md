@@ -1,4 +1,4 @@
-stage 1: 
+stage 1:
 Xử lý dữ liệu thô
 1-9
 
