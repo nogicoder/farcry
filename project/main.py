@@ -1,11 +1,12 @@
 #!/usr/bin/python3
 from stage1 import *
+from stage2 import *
 
 if __name__ == "__main__":
     import json
-
-    log_file_pathname = "../logs/log00.txt"
-    csv_file_path = "csv/log00.csv"
+    number_log_file = '03'
+    log_file_pathname = "../logs/log" + number_log_file + ".txt"
+    csv_file_path = "csv/log" + number_log_file +".csv"
 
     # wp1 
     log_data = read_log_file(log_file_pathname)
@@ -43,3 +44,6 @@ if __name__ == "__main__":
     """
     farcry.db
     """
+
+    wp25 = insert_match_to_sqlite('farcry.db', wp8[0], wp8[1], wp4[0], wp4[1], wp5_6)
+    print(wp25)
